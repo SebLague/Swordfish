@@ -24,6 +24,7 @@ ModelImporter:
     100032: Skin
     100034: //RootNode
     100036: Top
+    100038: Skin_001
     400000: Armature
     400002: Bone
     400004: Bone_001
@@ -43,9 +44,14 @@ ModelImporter:
     400032: Skin
     400034: //RootNode
     400036: Top
+    400038: Skin_001
     2100000: unnamed
     2100002: Chair
     2100004: Frame
+    2100006: Hair
+    2100008: Top
+    2100010: Pants
+    2100012: Skin
     2300000: Chair
     3300000: Chair
     4300000: Shoes
@@ -53,6 +59,7 @@ ModelImporter:
     4300004: Bottom
     4300006: Skin
     4300008: Chair
+    4300010: Skin_001
     7400000: Default Take
     7400002: Sit_idle
     9500000: //RootNode
@@ -60,6 +67,7 @@ ModelImporter:
     13700002: Shoes
     13700004: Skin
     13700006: Top
+    13700008: Skin_001
   externalObjects: {}
   materials:
     importMaterials: 1
