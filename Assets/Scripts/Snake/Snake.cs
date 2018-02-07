@@ -139,7 +139,7 @@ public class Snake : MonoBehaviour
     {
 
         SnakeSegment tail = snake[snake.Count - 1];
-        Vector2 forwardDir = forwardDir = (snake[snake.Count - 2].position - tail.position).normalized;
+        Vector2 forwardDir = (snake[snake.Count - 2].position - tail.position).normalized;
 
         Vector2 position = tail.position - forwardDir * spacing;
 
