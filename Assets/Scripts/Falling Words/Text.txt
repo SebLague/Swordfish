@@ -1,0 +1,1 @@
+alice, bob, hack, code, inject, upload, download, encrypt, decrypt, ping, brute-force, install malware, dump data

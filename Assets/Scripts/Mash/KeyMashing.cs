@@ -7,7 +7,7 @@ public class KeyMashing : MonoBehaviour {
 
     public TextMesh progressText;
     public Transform progressBar;
-    int totalNum = 256;
+    int totalNum = 512;
     int num;
 
 	// Use this for initialization

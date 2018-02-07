@@ -1,0 +1,3 @@
+launch hydra.exe, overclock cpu, accelerate gpu, download extra ram, initiate supercooling,
+calculate ip address, open dark web, ping fbi server, sniff data packets, overflow buffer, download contents,
+trace root file, log server id, awaken the hydra, release the hydra
