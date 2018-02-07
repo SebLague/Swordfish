@@ -31,6 +31,21 @@ ModelImporter:
     100046: Plane_008
     100048: //RootNode
     100050: Stand
+    100052: Circle
+    100054: Cube_010
+    100056: Cube_012
+    100058: Cube_013
+    100060: Cube_014
+    100062: Cube_015
+    100064: BezierCurve
+    100066: BezierCurve_001
+    100068: BezierCurve_002
+    100070: Cube_016
+    100072: Cylinder
+    100074: Cylinder_001
+    100076: Cylinder_002
+    100078: BezierCurve_003
+    100080: Cube_017
     400000: Chair
     400002: Cube
     400004: Cube_001
@@ -57,6 +72,21 @@ ModelImporter:
     400046: Plane_008
     400048: //RootNode
     400050: Stand
+    400052: Circle
+    400054: Cube_010
+    400056: Cube_012
+    400058: Cube_013
+    400060: Cube_014
+    400062: Cube_015
+    400064: BezierCurve
+    400066: BezierCurve_001
+    400068: BezierCurve_002
+    400070: Cube_016
+    400072: Cylinder
+    400074: Cylinder_001
+    400076: Cylinder_002
+    400078: BezierCurve_003
+    400080: Cube_017
     2100000: Wall
     2100002: Brushed_metal
     2100004: Chair
@@ -71,6 +101,28 @@ ModelImporter:
     2100022: Screen__Screen_uvs
     2100024: Screen__Screen2
     2100026: Screen__Screen_uvs16x9
+    2100028: Monitor_dec
+    2100030: Table_rim
+    2100032: Material
+    2100034: Table_inside
+    2100036: Glass
+    2100038: Bottle
+    2100040: Bottle_top
+    2100042: Label
+    2100044: Plate
+    2100046: Food
+    2100048: Crust
+    2100050: Bread
+    2100052: Boox_cov
+    2100054: Page
+    2100056: Keys
+    2100058: WALL2
+    2100060: Wall_yellow
+    2100062: Tabletop
+    2100064: light_metal
+    2100066: Liquid
+    2100068: Skirting
+    2100070: Wire
     2300000: Chair
     2300002: Cube
     2300004: Cube_001
@@ -96,6 +148,21 @@ ModelImporter:
     2300044: Plane_007
     2300046: Plane_008
     2300048: Stand
+    2300050: Circle
+    2300052: Cube_010
+    2300054: Cube_012
+    2300056: Cube_013
+    2300058: Cube_014
+    2300060: Cube_015
+    2300062: BezierCurve
+    2300064: BezierCurve_001
+    2300066: BezierCurve_002
+    2300068: Cube_016
+    2300070: Cylinder
+    2300072: Cylinder_001
+    2300074: Cylinder_002
+    2300076: BezierCurve_003
+    2300078: Cube_017
     3300000: Chair
     3300002: Cube
     3300004: Cube_001
@@ -121,6 +188,21 @@ ModelImporter:
     3300044: Plane_007
     3300046: Plane_008
     3300048: Stand
+    3300050: Circle
+    3300052: Cube_010
+    3300054: Cube_012
+    3300056: Cube_013
+    3300058: Cube_014
+    3300060: Cube_015
+    3300062: BezierCurve
+    3300064: BezierCurve_001
+    3300066: BezierCurve_002
+    3300068: Cube_016
+    3300070: Cylinder
+    3300072: Cylinder_001
+    3300074: Cylinder_002
+    3300076: BezierCurve_003
+    3300078: Cube_017
     4300000: Plane_008
     4300002: Cube_011
     4300004: Cube
@@ -146,9 +228,139 @@ ModelImporter:
     4300044: Cube_003
     4300046: Cube_001
     4300048: Plane
+    4300050: Cube_014
+    4300052: Cube_012
+    4300054: Cube_013
+    4300056: Circle
+    4300058: Cube_010
+    4300060: Cube_015
+    4300062: BezierCurve_002
+    4300064: Cylinder_002
+    4300066: BezierCurve_001
+    4300068: Cylinder_001
+    4300070: Cylinder
+    4300072: BezierCurve
+    4300074: Cube_016
+    4300076: Cube_017
+    4300078: BezierCurve_003
     7400000: Default Take
     9500000: //RootNode
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bottle
+    second: {fileID: 2100000, guid: 74a770f01cb174b989f48333c5cbbded, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bottle_top
+    second: {fileID: 2100000, guid: 38927c5e52c064ba3a70a5c7daee2b1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bread
+    second: {fileID: 2100000, guid: a2d95b25d1ae94121ad7e90422e4c791, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Brushed_metal
+    second: {fileID: 2100000, guid: 9b0feed4d862a42afae553c1eaeea0e5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Crust
+    second: {fileID: 2100000, guid: 67a7e2265594045aba1537cb866174f9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frame
+    second: {fileID: 2100000, guid: 42cede3bc1d4748be814e7247d845995, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass
+    second: {fileID: 2100000, guid: 56f2f9a3e3b6b4b1387a652dcea6ec25, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Keyboard
+    second: {fileID: 2100000, guid: 183dab6861bbf41d6b46ba9cfc2867b9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Keys
+    second: {fileID: 2100000, guid: d491bbd243cb34ab3b93ded723ca6fc8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Label
+    second: {fileID: 2100000, guid: 2b914a2b00a7f41968194d0a031f6064, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light
+    second: {fileID: 2100000, guid: 7be8ac0a174014374b54bb241ebf1c4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Liquid
+    second: {fileID: 2100000, guid: 52bdd1832c6e44a4da3d99b18866922f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Monitor_dec
+    second: {fileID: 2100000, guid: fab138e5a580540f5be4a93ce01b3797, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Plate
+    second: {fileID: 2100000, guid: 8d4ff7c69f8c6466998122727fd43b2d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Screen__Screen_uvs16x9
+    second: {fileID: 2100000, guid: 272cc92cfd4d94982b10d1785fcb0ad9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Skirting
+    second: {fileID: 2100000, guid: a130d67de4a464b35bec3f7fe309bafc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Table
+    second: {fileID: 2100000, guid: bff6fceaa7a8044e7934cd3bd4e1591d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Table_rim
+    second: {fileID: 2100000, guid: 3d7c26e193e97459da0fadd008138ad6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tabletop
+    second: {fileID: 2100000, guid: 5bff1fc42cd154d9eb4912cfe7e7021b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WALL2
+    second: {fileID: 2100000, guid: 843f51620cd4547519b726614b9c5587, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wall
+    second: {fileID: 2100000, guid: 9a79c9eb844c845ffb730ac2d7d377c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wall_yellow
+    second: {fileID: 2100000, guid: 5cf9fddb58abf4c6fa1246a04824a752, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_metal
+    second: {fileID: 2100000, guid: 8ca18eff2bb1b49cb99544b20558d29c, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
