@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Missile : MonoBehaviour {
 
+	public event System.Action OnDeath;
+	public event System.Action OnPlayerDeath;
+
     public float speed = 6;
     public float smoothTime = .2f;
     public float detractionForce = 3;
@@ -40,15 +43,18 @@ public class Missile : MonoBehaviour {
         detractForceFactor = Mathf.Clamp01(detractForceFactor);
 
         float dstToTarget = (target.transform.position - transform.position).magnitude;
-        Vector2 dirToTarget = (target.transform.position - transform.position).normalized;
+		Vector2 targetPoint = EstimatePointOfImpact();
+        Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
         float currSmoothTime = Mathf.Lerp(0,smoothTime, (dstToTarget - .3f));
-        Vector2 targetPoint = EstimatePointOfImpact();
+
 
         Vector2 targetDir = (dirToTarget * speed + detractDir * detractionForce * detractForceFactor).normalized;
         Vector2 targetV = targetDir * speed;
+ 
         currV = Vector2.SmoothDamp(currV, targetV, ref smoothV, currSmoothTime, float.MaxValue, Time.deltaTime);
 
-        transform.Translate(currV * Time.deltaTime);
+        transform.Translate(currV * Time.deltaTime,Space.World);
+       
 	}
 
 
@@ -69,12 +75,45 @@ public class Missile : MonoBehaviour {
         return targetPos;
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Missile")
+        {
+            float dstToPlayer = (target.transform.position - transform.position).magnitude;
+            bool killPlayer = dstToPlayer < .5f;
+            Explode(killPlayer);
+        }
+        else if (collision.tag == "Player")
+        {
+            Explode(true);
+        }
+    }
+
+    void Explode(bool killPlayer)
+    {
+        if (killPlayer)
+        {
+            if (OnPlayerDeath != null)
+            {
+                OnPlayerDeath();
+            }
+        }
+
+        if (OnDeath != null)
+        {
+            OnDeath();
+        }
+
+        Destroy(gameObject);
+    }
+
     private void OnDrawGizmos()
     {
         if (Application.isPlaying)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(EstimatePointOfImpact(), .1f);
+           // Gizmos.DrawSphere(EstimatePointOfImpact(), .1f);
+
         }
     }
 }
