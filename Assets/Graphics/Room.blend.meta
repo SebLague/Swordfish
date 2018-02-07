@@ -46,6 +46,7 @@ ModelImporter:
     100076: Cylinder_002
     100078: BezierCurve_003
     100080: Cube_017
+    100082: Cube_018
     400000: Chair
     400002: Cube
     400004: Cube_001
@@ -87,6 +88,7 @@ ModelImporter:
     400076: Cylinder_002
     400078: BezierCurve_003
     400080: Cube_017
+    400082: Cube_018
     2100000: Wall
     2100002: Brushed_metal
     2100004: Chair
@@ -123,6 +125,11 @@ ModelImporter:
     2100066: Liquid
     2100068: Skirting
     2100070: Wire
+    2100072: Sky
+    2100074: Outside_wall
+    2100076: Street
+    2100078: Door
+    2100080: Knob
     2300000: Chair
     2300002: Cube
     2300004: Cube_001
@@ -163,6 +170,7 @@ ModelImporter:
     2300074: Cylinder_002
     2300076: BezierCurve_003
     2300078: Cube_017
+    2300080: Cube_018
     3300000: Chair
     3300002: Cube
     3300004: Cube_001
@@ -203,6 +211,7 @@ ModelImporter:
     3300074: Cylinder_002
     3300076: BezierCurve_003
     3300078: Cube_017
+    3300080: Cube_018
     4300000: Plane_008
     4300002: Cube_011
     4300004: Cube
@@ -243,6 +252,7 @@ ModelImporter:
     4300074: Cube_016
     4300076: Cube_017
     4300078: BezierCurve_003
+    4300080: Cube_018
     7400000: Default Take
     9500000: //RootNode
   externalObjects:
@@ -314,6 +324,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Outside_wall
+    second: {fileID: 2100000, guid: 6d01433ef6561491ca1805ae2e7741aa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Plate
     second: {fileID: 2100000, guid: 8d4ff7c69f8c6466998122727fd43b2d, type: 2}
   - first:
@@ -326,6 +341,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Skirting
     second: {fileID: 2100000, guid: a130d67de4a464b35bec3f7fe309bafc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sky
+    second: {fileID: 2100000, guid: 7c1788f658e21445da83c7ceb114e8e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Street
+    second: {fileID: 2100000, guid: c8315dffa3b1642d08a30c2a6a4cc7e8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

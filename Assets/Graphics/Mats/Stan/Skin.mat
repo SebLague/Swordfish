@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Wall2
+  m_Name: Skin
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -72,5 +72,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.29411763, g: 0.18819353, b: 0.14922145, a: 1}
+    - _Color: {r: 0.8897059, g: 0.6899281, b: 0.5364403, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
