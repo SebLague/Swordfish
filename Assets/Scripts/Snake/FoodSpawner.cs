@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Snack : MonoBehaviour {
+public class FoodSpawner : MonoBehaviour {
 
     //string chars = "!@£$%^&*()_+œ∑´†¥^øπ“æ…¬˚∆˙©ƒ∂ßå`Ω≈ç√∫~µ≤≥÷¿˘¯˜ˆı◊ÇÙÛŸÅÍÎÏÌÓÆØÈËÁÊÂ‰„Œ⁄‹›ﬁﬂ‡°·‚—±§1234567890";
     string chars = "@%¿¿¿¿Ÿ¥∆°çµ";

@@ -424,7 +424,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &112577680
 Transform:
   m_ObjectHideFlags: 0
@@ -961,6 +961,7 @@ Transform:
   m_Children:
   - {fileID: 163551227}
   - {fileID: 112577680}
+  - {fileID: 1250514976}
   - {fileID: 1434409134}
   - {fileID: 921192735}
   - {fileID: 1134876759}
@@ -2302,6 +2303,61 @@ Transform:
   m_Father: {fileID: 1801697205}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &717436466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 717436467}
+  - component: {fileID: 717436468}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &717436467
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 717436466}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1250514976}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &717436468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 717436466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eb4ca9ea2e2349078482c6a189d9c0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPos: {fileID: 717436467}
+  startSnakeSize: 5
+  speed: 5
+  mat: {fileID: 2100000, guid: 0bdf3a265efbf44da90f05af69261d15, type: 2}
+  size: 0.3
+  snakeMask:
+    serializedVersion: 2
+    m_Bits: 256
+  foodMask:
+    serializedVersion: 2
+    m_Bits: 512
+  wiggleSpeed: 15
+  wiggleDst: 0.03
+  wiggle: 1
+  smoothMoveTime: 0.01
 --- !u!1 &729904194
 GameObject:
   m_ObjectHideFlags: 0
@@ -2435,7 +2491,7 @@ Transform:
   - {fileID: 1445330537}
   - {fileID: 1072192648}
   m_Father: {fileID: 282310146}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &852227154
 GameObject:
@@ -2828,7 +2884,7 @@ Transform:
   - {fileID: 533224344}
   - {fileID: 1801697205}
   m_Father: {fileID: 282310146}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &921192736
 MonoBehaviour:
@@ -3296,7 +3352,7 @@ Transform:
   - {fileID: 487672923}
   - {fileID: 2077628012}
   m_Father: {fileID: 282310146}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1134876760
 MonoBehaviour:
@@ -3482,6 +3538,49 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1242654133}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1250514975
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1250514976}
+  - component: {fileID: 1250514977}
+  m_Layer: 0
+  m_Name: Snake
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1250514976
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1250514975}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 717436467}
+  m_Father: {fileID: 282310146}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1250514977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1250514975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9a0ba4fa6efe43fba5afdbecb5b7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foodPrefab: {fileID: 102021526533161572, guid: 3a1e30284aa95491094654bb0077d92c,
+    type: 2}
 --- !u!1 &1265860940
 GameObject:
   m_ObjectHideFlags: 0
@@ -4075,7 +4174,7 @@ Transform:
   - {fileID: 221216705}
   - {fileID: 83800984}
   m_Father: {fileID: 282310146}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1438241999
 GameObject:

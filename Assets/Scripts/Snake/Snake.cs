@@ -14,9 +14,10 @@ public class Snake : MonoBehaviour
 
     public float wiggleSpeed = 2;
     public float wiggleDst = .2f;
+    public bool wiggle;
     float wiggleAmountOld;
     float wiggleTime;
-    float spacing;
+    public static float spacing;
     int numEaten;
     int maxLength = 100;
     int visIndex;
@@ -28,10 +29,12 @@ public class Snake : MonoBehaviour
     Vector2 velocity;
     Vector2 smoothVelocityRef;
     List<SnakeSegment> snake;
+    ScreenAreas screen;
 
     void Start()
     {
         spacing = size;
+        screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
     }
 
@@ -41,13 +44,32 @@ public class Snake : MonoBehaviour
         wiggleTime += Time.deltaTime;
 
         Vector2 dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (dir == Vector2.zero || dir == -dirOld || dir.sqrMagnitude > 1)
+        if (dir == Vector2.zero || dir == -dirOld)
         {
             dir = dirOld;
         }
         else
         {
-            dirOld = dir;
+            if (dir.sqrMagnitude > 1) // holding multiple keys; so pick only latest one
+            {
+                if (dir.x != dirOld.x)
+                {
+                    dir = Vector2.right * dir.x;
+                }
+                else if (dir.y != dirOld.y)
+                {
+                    dir = Vector2.up * dir.y;
+                }
+                else
+                {
+                    dir = dirOld;
+                }
+            }
+            else
+            {
+                dirOld = dir;
+
+            }
         }
 
         float wiggleAmount = Mathf.Sin(wiggleTime * wiggleSpeed) * wiggleDst;
@@ -57,10 +79,41 @@ public class Snake : MonoBehaviour
 
         Vector2 targetVelocity = dir * speed;
         velocity = Vector2.SmoothDamp(velocity, targetVelocity, ref smoothVelocityRef, smoothMoveTime, float.MaxValue,Time.deltaTime);
-        Vector2 displacement = velocity * Time.deltaTime + wiggleDir * deltaWiggle;
+        float wiggleFac = (wiggle) ? 1 : 0;
+        Vector2 displacement = velocity * Time.deltaTime + wiggleDir * deltaWiggle*wiggleFac;
+
         float moveDst = displacement.magnitude;
 
         snake[0].Move(displacement);
+
+        float buffer = .1f;
+        // left
+        if (snake[0].position.x + size / 2f < screen.minMaxX.x)
+        {
+            Vector2 newPos = new Vector2(screen.minMaxX.y + size / 2f - buffer, snake[0].position.y);
+            //print("left: " + newPos);
+            snake[0].Move(newPos - snake[0].position);
+        }
+        //right
+		if (snake[0].position.x - size / 2f > screen.minMaxX.y)
+		{
+			//print("right");
+            Vector2 newPos = new Vector2(screen.minMaxX.x - size / 2f + buffer, snake[0].position.y);
+			snake[0].Move(newPos - snake[0].position);
+		}
+        //down
+		if (snake[0].position.y + size / 2f < screen.minMaxY.x)
+		{
+            Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.y + size / 2f - buffer);
+			snake[0].Move(newPos - snake[0].position);
+		}
+		//up
+		if (snake[0].position.y - size / 2f > screen.minMaxY.y)
+		{
+            Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
+			snake[0].Move(newPos - snake[0].position);
+		}
+
         for (int i = 1; i < snake.Count; i++)
         {
             snake[i].Follow(moveDst);
@@ -154,7 +207,7 @@ public class Snake : MonoBehaviour
         public Queue<Vector2> pastPositions;
         public Vector2 position;
         public Vector2 target;
-
+        const float teleportThreshold = 3;
         SnakeSegment parentSegment;
         Transform t;
 
@@ -179,16 +232,24 @@ public class Snake : MonoBehaviour
             position += moveAmount;
             t.position = position;
             pastPositions.Enqueue(position);
+            //Debug.Log("new pos: " + position + " move dst: " + moveAmount.magnitude);
         }
 
 
         public void Follow(float moveDst)
         {
 			float moveDstRemaining = moveDst;
+      
 
 			while (moveDstRemaining > 0)
 			{
+                
 				float dstToTarget = Vector2.Distance(position, target);
+                if (dstToTarget > teleportThreshold)
+                {
+                    position = target;
+                    dstToTarget = 0;
+                }
 
 				if (dstToTarget <= moveDstRemaining)
 				{
@@ -212,6 +273,7 @@ public class Snake : MonoBehaviour
 			}
 
 			t.position = position;
+           
         }
 
         public void SetVisible(bool v)
