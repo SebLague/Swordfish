@@ -8,7 +8,7 @@ public class Snake : MonoBehaviour
     public int startSnakeSize = 5;
     public float speed = 5;
     public Material mat;
-    public float size = .3f;
+    public const float size = .15f;
     public LayerMask snakeMask;
     public LayerMask foodMask;
 
@@ -17,7 +17,7 @@ public class Snake : MonoBehaviour
     public bool wiggle;
     float wiggleAmountOld;
     float wiggleTime;
-    public static float spacing;
+    public const float spacing = size;
     int numEaten;
     int maxLength = 100;
     int visIndex;
@@ -33,7 +33,6 @@ public class Snake : MonoBehaviour
 
     void Start()
     {
-        spacing = size;
         screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
     }

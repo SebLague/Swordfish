@@ -7,10 +7,23 @@ public class Missile : MonoBehaviour {
 	public event System.Action OnDeath;
 	public event System.Action OnPlayerDeath;
 
+    public GameObject explosion;
     public float speed = 6;
-    public float smoothTime = .2f;
+    public float slerpSpeed = 4;
+    //public float maxSlerpSpeed = 10;
     public float detractionForce = 3;
     public float detractionRadius = 3;
+    public float targetNoise = .2f;
+    public float retargetTime = 1;
+    public float retargetThresholdDst = 2;
+    public float timeBetweenRetargets = 8;
+    public float circleTimeBeforeRetarget = 1;
+    float lastRetargetTime;
+    float timeCircling;
+
+    Vector2 retargetDir;
+    float endRetargetTime;
+
     Vector2 currV;
     Vector2 smoothV;
     public LayerMask missileMask;
@@ -42,17 +55,46 @@ public class Missile : MonoBehaviour {
         detractDir.Normalize();
         detractForceFactor = Mathf.Clamp01(detractForceFactor);
 
-        float dstToTarget = (target.transform.position - transform.position).magnitude;
-		Vector2 targetPoint = EstimatePointOfImpact();
-        Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
-        float currSmoothTime = Mathf.Lerp(0,smoothTime, (dstToTarget - .3f));
+        Vector2 targetDir = Vector2.zero;
+        if (Time.time > endRetargetTime)
+        {
+            float dstToTarget = (target.transform.position - transform.position).magnitude;
+            Vector2 targetPoint = EstimatePointOfImpact();
+            Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
 
+            float angleToTarget = Vector2.Angle(transform.up, dirToTarget);
+            if (angleToTarget > 75 && angleToTarget < 105)
+            {
+                timeCircling += Time.deltaTime;
+            }
+            else
+            {
+                timeCircling = 0;
+            }
+            if (dstToTarget < retargetThresholdDst && timeCircling > circleTimeBeforeRetarget && Time.time-lastRetargetTime>timeBetweenRetargets)
+            {
+                retargetDir = Random.insideUnitCircle.normalized;
+                endRetargetTime = Time.time + retargetTime;
+                lastRetargetTime = endRetargetTime;
+                timeCircling = 0;
+            }
+           
+            //float currSmoothTime = Mathf.Lerp(0,slerpSpeed, (dstToTarget - .3f));
+            // float currSlerpSpeed = Mathf.Lerp(maxSlerpSpeed, slerpSpeed, (dstToTarget - .3f));
 
-        Vector2 targetDir = (dirToTarget * speed + detractDir * detractionForce * detractForceFactor).normalized;
+            targetDir = (dirToTarget * speed + detractDir * detractionForce * detractForceFactor).normalized;
+        }
+        else
+        {
+            targetDir = retargetDir;
+        }
         Vector2 targetV = targetDir * speed;
- 
-        currV = Vector2.SmoothDamp(currV, targetV, ref smoothV, currSmoothTime, float.MaxValue, Time.deltaTime);
 
+        //currV = Vector2.SmoothDamp(currV, targetV, ref smoothV, currSmoothTime, float.MaxValue, Time.deltaTime);
+        currV = Vector3.Slerp(currV, targetV, Time.deltaTime * slerpSpeed);
+       // currV = targetV;
+        //print(Time.deltaTime * smoothTime);
+        transform.up = currV.normalized;
         transform.Translate(currV * Time.deltaTime,Space.World);
        
 	}
@@ -60,30 +102,33 @@ public class Missile : MonoBehaviour {
 
     Vector2 EstimatePointOfImpact()
     {
-        int iterations = 4;
+        int iterations = 3;
         Vector2 initialTargetPos = target.transform.position;
-        Vector2 targetPos = initialTargetPos;
-        Vector2 targetDir = target.currV.normalized;
+        Vector2 estimatedImpactPos = initialTargetPos;
+        Vector2 targetDir = target.targetV.normalized;
 
 		for (int i = 0; i < iterations; i++)
         {
-            float dstToTarget = ((Vector2)transform.position - targetPos).magnitude;
+            float dstToTarget = ((Vector2)transform.position - estimatedImpactPos).magnitude;
 			float timeToImpact = dstToTarget / speed;
-            targetPos = initialTargetPos + targetDir * timeToImpact;
+            //print(dstToTarget + " t: " + timeToImpact);
+            estimatedImpactPos = initialTargetPos + targetDir * timeToImpact * target.speed;
         }
 
-        return targetPos;
+        return estimatedImpactPos + Random.insideUnitCircle * targetNoise;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        /*
         if (collision.tag == "Missile")
         {
             float dstToPlayer = (target.transform.position - transform.position).magnitude;
             bool killPlayer = dstToPlayer < .5f;
             Explode(killPlayer);
         }
-        else if (collision.tag == "Player")
+        */
+        if (collision.tag == "Player")
         {
             Explode(true);
         }
@@ -103,6 +148,8 @@ public class Missile : MonoBehaviour {
         {
             OnDeath();
         }
+
+        Destroy(Instantiate(explosion, transform.position, Quaternion.identity), 2);
 
         Destroy(gameObject);
     }
