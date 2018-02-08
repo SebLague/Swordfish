@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
+    public event System.Action OnEat;
+
+    public GameObject bodyPrefab;
     public Transform startPos;
     public int startSnakeSize = 5;
     public float speed = 5;
@@ -11,9 +14,10 @@ public class Snake : MonoBehaviour
     public const float size = .15f;
     public LayerMask snakeMask;
     public LayerMask foodMask;
-
+    public int numToGrowByPerFood = 2;
     public float wiggleSpeed = 2;
     public float wiggleDst = .2f;
+    public float growSpeed = 1;
     public bool wiggle;
     float wiggleAmountOld;
     float wiggleTime;
@@ -21,6 +25,9 @@ public class Snake : MonoBehaviour
     int numEaten;
     int maxLength = 100;
     int visIndex;
+    List<Transform> growingParts;
+    bool dead;
+    static List<Vector2> headPoints;
 
     Vector2 initialDirection = Vector2.right;
     Vector2 dirOld;
@@ -33,119 +40,185 @@ public class Snake : MonoBehaviour
 
     void Start()
     {
+        headPoints = new List<Vector2>();
+        maxLength = numToGrowByPerFood * 64 + startSnakeSize + 10;
         screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
+        growingParts = new List<Transform>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        wiggleTime += Time.deltaTime;
+        if (!dead)
+        {
+            wiggleTime += Time.deltaTime;
 
-        Vector2 dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (dir == Vector2.zero || dir == -dirOld)
-        {
-            dir = dirOld;
-        }
-        else
-        {
-            if (dir.sqrMagnitude > 1) // holding multiple keys; so pick only latest one
+            Vector2 dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (dir == Vector2.zero || dir == -dirOld)
             {
-                if (dir.x != dirOld.x)
-                {
-                    dir = Vector2.right * dir.x;
-                }
-                else if (dir.y != dirOld.y)
-                {
-                    dir = Vector2.up * dir.y;
-                }
-                else
-                {
-                    dir = dirOld;
-                }
+                dir = dirOld;
             }
             else
             {
-                dirOld = dir;
+                if (dir.sqrMagnitude > 1) // holding multiple keys; so pick only latest one
+                {
+                    if (dir.x != dirOld.x)
+                    {
+                        dir = Vector2.right * dir.x;
+                    }
+                    else if (dir.y != dirOld.y)
+                    {
+                        dir = Vector2.up * dir.y;
+                    }
+                    else
+                    {
+                        dir = dirOld;
+                    }
+                }
+                else
+                {
+                    dirOld = dir;
 
+                }
             }
+
+            float wiggleAmount = Mathf.Sin(wiggleTime * wiggleSpeed) * wiggleDst;
+            float deltaWiggle = wiggleAmount - wiggleAmountOld;
+            wiggleAmountOld = wiggleAmount;
+            Vector2 wiggleDir = new Vector2(-dir.y, dir.x);
+
+            Vector2 targetVelocity = dir * speed;
+            velocity = Vector2.SmoothDamp(velocity, targetVelocity, ref smoothVelocityRef, smoothMoveTime, float.MaxValue, Time.deltaTime);
+            float wiggleFac = (wiggle) ? 1 : 0;
+            Vector2 displacement = velocity * Time.deltaTime + wiggleDir * deltaWiggle * wiggleFac;
+
+            float moveDst = displacement.magnitude;
+
+            snake[0].Move(displacement);
+
+            float buffer = .1f;
+            // left
+            if (snake[0].position.x + size / 2f < screen.minMaxX.x)
+            {
+                Vector2 newPos = new Vector2(screen.minMaxX.y + size / 2f - buffer, snake[0].position.y);
+                //print("left: " + newPos);
+                snake[0].Move(newPos - snake[0].position);
+            }
+            //right
+            if (snake[0].position.x - size / 2f > screen.minMaxX.y)
+            {
+                //print("right");
+                Vector2 newPos = new Vector2(screen.minMaxX.x - size / 2f + buffer, snake[0].position.y);
+                snake[0].Move(newPos - snake[0].position);
+            }
+            //down
+            if (snake[0].position.y + size / 2f < screen.minMaxY.x)
+            {
+                Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.y + size / 2f - buffer);
+                snake[0].Move(newPos - snake[0].position);
+            }
+            //up
+            if (snake[0].position.y - size / 2f > screen.minMaxY.y)
+            {
+                Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
+                snake[0].Move(newPos - snake[0].position);
+            }
+
+            for (int i = 1; i < snake.Count; i++)
+            {
+                snake[i].Follow(moveDst);
+            }
+
+            if (Physics2D.OverlapCircle(snake[0].position, size * .5f, snakeMask))
+            {
+                Debug.DrawRay(snake[0].position, Vector2.up * size * .5f, Color.red);
+                OnDeath();
+            }
+
+            Collider2D food = Physics2D.OverlapCircle(snake[0].position, size * .5f, foodMask);
+            if (food != null)
+            {
+                Eat(food.gameObject);
+            }
+
+            if (growingParts.Count > 0)
+            {
+                float s = growingParts[0].localScale.x;
+                s = Mathf.Clamp(s + Time.deltaTime * growSpeed * size, 0, size);
+                growingParts[0].localScale = Vector3.one * s;
+                if (s == size)
+                {
+                    growingParts.RemoveAt(0);
+                }
+            }
+
+            /*
+            for (int i = growingParts.Count-1; i >= 0; i--)
+            {
+                float s = growingParts[i].localScale.x;
+                s = Mathf.Clamp(s + Time.deltaTime * growSpeed*size,0,size);
+                growingParts[i].localScale = Vector3.one * s;
+                if (s == size)
+                {
+                    growingParts.RemoveAt(i);
+                }
+            }
+            */
         }
-
-        float wiggleAmount = Mathf.Sin(wiggleTime * wiggleSpeed) * wiggleDst;
-        float deltaWiggle = wiggleAmount - wiggleAmountOld;
-        wiggleAmountOld = wiggleAmount;
-        Vector2 wiggleDir = new Vector2(-dir.y, dir.x);
-
-        Vector2 targetVelocity = dir * speed;
-        velocity = Vector2.SmoothDamp(velocity, targetVelocity, ref smoothVelocityRef, smoothMoveTime, float.MaxValue,Time.deltaTime);
-        float wiggleFac = (wiggle) ? 1 : 0;
-        Vector2 displacement = velocity * Time.deltaTime + wiggleDir * deltaWiggle*wiggleFac;
-
-        float moveDst = displacement.magnitude;
-
-        snake[0].Move(displacement);
-
-        float buffer = .1f;
-        // left
-        if (snake[0].position.x + size / 2f < screen.minMaxX.x)
+        else
         {
-            Vector2 newPos = new Vector2(screen.minMaxX.y + size / 2f - buffer, snake[0].position.y);
-            //print("left: " + newPos);
-            snake[0].Move(newPos - snake[0].position);
-        }
-        //right
-		if (snake[0].position.x - size / 2f > screen.minMaxX.y)
-		{
-			//print("right");
-            Vector2 newPos = new Vector2(screen.minMaxX.x - size / 2f + buffer, snake[0].position.y);
-			snake[0].Move(newPos - snake[0].position);
-		}
-        //down
-		if (snake[0].position.y + size / 2f < screen.minMaxY.x)
-		{
-            Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.y + size / 2f - buffer);
-			snake[0].Move(newPos - snake[0].position);
-		}
-		//up
-		if (snake[0].position.y - size / 2f > screen.minMaxY.y)
-		{
-            Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
-			snake[0].Move(newPos - snake[0].position);
-		}
-
-        for (int i = 1; i < snake.Count; i++)
-        {
-            snake[i].Follow(moveDst);
-        }
-
-        if (Physics2D.OverlapCircle(snake[0].position, size * .5f, snakeMask))
-        {
-            Debug.DrawRay(snake[0].position, Vector2.up * size * .5f, Color.red);
-            OnDeath();
-        }
-
-        Collider2D food = Physics2D.OverlapCircle(snake[0].position, size * .5f, foodMask);
-        if (food != null)
-        {
-            Eat(food.gameObject);
+            for (int i = 0; i < visIndex; i++)
+            {
+                int numRem = visIndex - i;
+                float startS = snake[i].t.localScale.x;
+                snake[i].t.localScale = Vector3.MoveTowards(snake[i].t.localScale, Vector3.zero, (.5f+numRem * .2f) * Time.deltaTime);
+                if (startS > 0)
+                {
+                    break;
+                }
+            }
         }
     }
 
     void Eat(GameObject food) {
-        Destroy(food);
-        //GrowSnake();
-        if (visIndex < maxLength)
+        if (!dead)
         {
-            snake[visIndex].SetVisible(true);
+            if (OnEat != null)
+            {
+                OnEat();
+            }
+            Destroy(food);
+            //GrowSnake();
+            for (int i = 0; i < numToGrowByPerFood; i++)
+            {
+                if (visIndex < maxLength)
+                {
+                    snake[visIndex].SetVisible(true);
+                    growingParts.Add(snake[visIndex].t);
+                    snake[visIndex].t.localScale = Vector3.zero;
+                }
+                visIndex++;
+            }
+
+            numEaten++;
         }
-        numEaten++;
-        visIndex++;
 
     }
 
     void OnDeath()
     {
-        print("Death");
+        if (!dead)
+        {
+            dead = true;
+            for (int i = 0; i < visIndex; i++)
+            {
+                if (i < snake.Count)
+                {
+                    snake[i].t.GetComponent<MeshRenderer>().material.color = Color.red;
+                }
+            }
+        }
     }
 
     void CreateSnake(int initialSize = 2)
@@ -169,18 +242,23 @@ public class Snake : MonoBehaviour
 
     SnakeSegment CreateBodyPart(Vector2 position, SnakeSegment parent)
     {
-		GameObject g = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
+        GameObject g = Instantiate(bodyPrefab);
+     
         g.transform.localScale = Vector3.one * size;
         g.transform.parent = transform;
-        g.GetComponent<MeshRenderer>().material = mat;
-        DestroyImmediate(g.GetComponent<SphereCollider>());
-        SnakeSegment p = new SnakeSegment(parent, position, g.transform);
+        g.transform.localEulerAngles = Vector3.right * 90;
 
-        g.layer = LayerMask.NameToLayer("Snake");
+        SnakeSegment p = new SnakeSegment(parent, position, g.transform);
         if (snake.Count > 1)
         {
             CircleCollider2D c = g.AddComponent<CircleCollider2D>();
+            c.radius = .1f;
             c.isTrigger = true;
+        }
+        else
+        {
+            Destroy(g.GetComponent<CircleCollider2D>());
         }
 
 
@@ -201,14 +279,12 @@ public class Snake : MonoBehaviour
 
     public class SnakeSegment
     {
-        //const float distanceBetweenRecordings = 1;
-        public bool debug;
         public Queue<Vector2> pastPositions;
         public Vector2 position;
         public Vector2 target;
         const float teleportThreshold = 3;
         SnakeSegment parentSegment;
-        Transform t;
+        public Transform t;
 
         public SnakeSegment(SnakeSegment parentSegment, Vector2 position, Transform t)
         {
@@ -231,7 +307,6 @@ public class Snake : MonoBehaviour
             position += moveAmount;
             t.position = position;
             pastPositions.Enqueue(position);
-            //Debug.Log("new pos: " + position + " move dst: " + moveAmount.magnitude);
         }
 
 
