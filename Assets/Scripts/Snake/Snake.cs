@@ -27,7 +27,7 @@ public class Snake : MonoBehaviour
     int visIndex;
     List<Transform> growingParts;
     bool dead;
-    static List<Vector2> headPoints;
+    static List<MoveData> headPoints;
 
     Vector2 initialDirection = Vector2.right;
     Vector2 dirOld;
@@ -38,9 +38,21 @@ public class Snake : MonoBehaviour
     List<SnakeSegment> snake;
     ScreenAreas screen;
 
+    struct MoveData
+    {
+        public Vector2 pos;
+        public bool teleport;
+
+        public MoveData(Vector2 pos, bool teleport)
+        {
+            this.pos = pos;
+            this.teleport = teleport;
+        }
+    }
+
     void Start()
     {
-        headPoints = new List<Vector2>();
+        headPoints = new List<MoveData>(1024);
         maxLength = numToGrowByPerFood * 64 + startSnakeSize + 10;
         screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
@@ -95,7 +107,7 @@ public class Snake : MonoBehaviour
 
             float moveDst = displacement.magnitude;
 
-            snake[0].Move(displacement);
+            snake[0].Move(displacement, false);
 
             float buffer = .1f;
             // left
@@ -103,26 +115,26 @@ public class Snake : MonoBehaviour
             {
                 Vector2 newPos = new Vector2(screen.minMaxX.y + size / 2f - buffer, snake[0].position.y);
                 //print("left: " + newPos);
-                snake[0].Move(newPos - snake[0].position);
+                snake[0].Move(newPos - snake[0].position,true);
             }
             //right
             if (snake[0].position.x - size / 2f > screen.minMaxX.y)
             {
                 //print("right");
                 Vector2 newPos = new Vector2(screen.minMaxX.x - size / 2f + buffer, snake[0].position.y);
-                snake[0].Move(newPos - snake[0].position);
+                snake[0].Move(newPos - snake[0].position,true);
             }
             //down
             if (snake[0].position.y + size / 2f < screen.minMaxY.x)
             {
                 Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.y + size / 2f - buffer);
-                snake[0].Move(newPos - snake[0].position);
+                snake[0].Move(newPos - snake[0].position,true);
             }
             //up
             if (snake[0].position.y - size / 2f > screen.minMaxY.y)
             {
                 Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
-                snake[0].Move(newPos - snake[0].position);
+                snake[0].Move(newPos - snake[0].position,true);
             }
 
             for (int i = 1; i < snake.Count; i++)
@@ -132,7 +144,6 @@ public class Snake : MonoBehaviour
 
             if (Physics2D.OverlapCircle(snake[0].position, size * .5f, snakeMask))
             {
-                Debug.DrawRay(snake[0].position, Vector2.up * size * .5f, Color.red);
                 OnDeath();
             }
 
@@ -149,6 +160,7 @@ public class Snake : MonoBehaviour
                 growingParts[0].localScale = Vector3.one * s;
                 if (s == size)
                 {
+                    growingParts[0].GetComponent<CircleCollider2D>().enabled = true;
                     growingParts.RemoveAt(0);
                 }
             }
@@ -197,6 +209,7 @@ public class Snake : MonoBehaviour
                     snake[visIndex].SetVisible(true);
                     growingParts.Add(snake[visIndex].t);
                     snake[visIndex].t.localScale = Vector3.zero;
+                    snake[visIndex].t.GetComponent<CircleCollider2D>().enabled = false;
                 }
                 visIndex++;
             }
@@ -252,7 +265,7 @@ public class Snake : MonoBehaviour
         SnakeSegment p = new SnakeSegment(parent, position, g.transform);
         if (snake.Count > 1)
         {
-            CircleCollider2D c = g.AddComponent<CircleCollider2D>();
+            CircleCollider2D c = g.GetComponent<CircleCollider2D>();
             c.radius = .1f;
             c.isTrigger = true;
         }
@@ -279,12 +292,12 @@ public class Snake : MonoBehaviour
 
     public class SnakeSegment
     {
-        public Queue<Vector2> pastPositions;
         public Vector2 position;
         public Vector2 target;
-        const float teleportThreshold = 3;
+
         SnakeSegment parentSegment;
         public Transform t;
+        int hI;
 
         public SnakeSegment(SnakeSegment parentSegment, Vector2 position, Transform t)
         {
@@ -292,21 +305,20 @@ public class Snake : MonoBehaviour
             this.t = t;
             t.position = position;
             this.position = position;
-            pastPositions = new Queue<Vector2>();
-            pastPositions.Enqueue(position);
 
             if (parentSegment != null)
             {
-                target = parentSegment.pastPositions.Dequeue();
+                target = parentSegment.position;
+                hI = parentSegment.hI;
             }
         }
 
         // This should only be used for the head of the snake
-        public void Move(Vector2 moveAmount)
+        public void Move(Vector2 moveAmount, bool teleport)
         {
             position += moveAmount;
             t.position = position;
-            pastPositions.Enqueue(position);
+            headPoints.Add(new MoveData(position,teleport));
         }
 
 
@@ -319,20 +331,21 @@ public class Snake : MonoBehaviour
 			{
                 
 				float dstToTarget = Vector2.Distance(position, target);
-                if (dstToTarget > teleportThreshold)
-                {
-                    position = target;
-                    dstToTarget = 0;
-                }
 
 				if (dstToTarget <= moveDstRemaining)
 				{
 					position = target;
-					pastPositions.Enqueue(position);
+					//pastPositions.Enqueue(position);
 					moveDstRemaining -= dstToTarget;
 
-					target = parentSegment.pastPositions.Dequeue();
-
+                    //target = parentSegment.pastPositions.Dequeue();
+                    MoveData md = headPoints[hI];
+                    target = md.pos;
+                    if (md.teleport)
+                    {
+                        position = target;
+                    }
+                    hI++;
 
 				}
 				else
@@ -340,7 +353,7 @@ public class Snake : MonoBehaviour
 					Vector2 newPos = position + (target - position).normalized * moveDstRemaining;
 
 					position = newPos;
-					pastPositions.Enqueue(position);
+					//pastPositions.Enqueue(position);
 					moveDstRemaining = 0;
 				}
 
@@ -352,6 +365,7 @@ public class Snake : MonoBehaviour
 
         public void SetVisible(bool v)
         {
+         
             t.gameObject.SetActive(v);
         }
       
