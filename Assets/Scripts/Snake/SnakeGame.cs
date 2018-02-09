@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SnakeGame : MonoBehaviour {
+public class SnakeGame : Task {
 
     BoxCollider2D[] screens;
     public GameObject foodGOPrefab;
@@ -21,6 +21,7 @@ public class SnakeGame : MonoBehaviour {
         numLeftToSpawn = numToSpawn;
         screens = FindObjectOfType<ScreenAreas>().allScreens;
         FindObjectOfType<Snake>().OnEat += OnEat;
+        FindObjectOfType<Snake>().OnDeathEvent += TaskFailed;
 
     }
 
@@ -39,10 +40,16 @@ public class SnakeGame : MonoBehaviour {
         }
     }
 
+
     void OnEat()
     {
         numOnScreen--;
         numEaten++;
+
+        if (numEaten >= numToSpawn)
+        {
+            TaskCompleted();
+        }
     }
 
     Vector2 RandomPoint()

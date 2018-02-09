@@ -5,6 +5,7 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     public event System.Action OnEat;
+    public event System.Action OnDeathEvent;
 
     public GameObject bodyPrefab;
     public Transform startPos;
@@ -223,6 +224,10 @@ public class Snake : MonoBehaviour
     {
         if (!dead)
         {
+            if (OnDeathEvent != null)
+            {
+                OnDeathEvent();
+            }
             dead = true;
             for (int i = 0; i < visIndex; i++)
             {

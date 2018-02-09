@@ -28,16 +28,21 @@ public class Sequencer : MonoBehaviour {
 	
     void NextTask()
     {
-        print("Next");
+        taskIndex++;
+        if (taskIndex < tasks.Length)
+        {
+            SpawnTask();
+        }
     }
 
     void Restart()
     {
-        StartCoroutine(RestartSequence());
+        StartCoroutine(RestartSequence(currentTask.restartDelay));
     }
 
-    IEnumerator RestartSequence()
+    IEnumerator RestartSequence(float delay)
     {
+        yield return new WaitForSeconds(delay);
         float p = 0;
         bool hasResetGame = false;
         while (p < 1)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DodgeGame : MonoBehaviour {
+public class DodgeGame : Task {
 
     public Missile missilePrefab;
     public Transform[] possibleSpawns;
@@ -67,6 +67,7 @@ public class DodgeGame : MonoBehaviour {
 
     void OnPlayerDeath()
     {
-        Debug.Break();
+        Destroy(player.gameObject);
+        TaskFailed();
     }
 }

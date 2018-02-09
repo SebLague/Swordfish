@@ -118,7 +118,7 @@ public class FallingWords : Task {
 
         if (activeWords.Count == 0 && allWordsSpawned && !done)
         {
-            TaskCompleted();
+            TaskCompleted ();
         }
 	}
 

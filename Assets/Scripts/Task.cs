@@ -6,6 +6,7 @@ public class Task : MonoBehaviour {
 
 	public event System.Action OnLose;
 	public event System.Action OnWin;
+    public float restartDelay = .1f;
 
     protected virtual void TaskCompleted()
     {
