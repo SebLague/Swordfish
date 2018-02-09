@@ -54,7 +54,10 @@ public class Transition : MonoBehaviour {
             {
                 if (LocalTime > remainingEnableEvents[i].time)
                 {
-                    remainingEnableEvents[i].obj.SetActive(remainingEnableEvents[i].active);
+                    foreach (GameObject g in remainingEnableEvents[i].obj)
+                    {
+                        g.SetActive(remainingEnableEvents[i].active);
+                    }
                     remainingEnableEvents.RemoveAt(i);
                 }
             }
@@ -105,11 +108,18 @@ public class Transition : MonoBehaviour {
     }
 
     IEnumerator DialogueSequence(DialogueEvent e)
-	{
-        FindObjectOfType<Stan>().SayWithText(e.text,e.audio);
-        float realDuration = (e.audio==null)?e.duration:e.audio.length;
-        yield return new WaitForSeconds(realDuration);
-        FindObjectOfType<Stan>().ClearDialogueText();
+    {
+        if (FindObjectOfType<Stan>())
+        {
+            FindObjectOfType<Stan>().SayWithText(e.text, e.audio);
+            float realDuration = (e.audio == null) ? e.duration : e.audio.length;
+            yield return new WaitForSeconds(realDuration);
+            FindObjectOfType<Stan>().ClearDialogueText();
+        }
+        else
+        {
+            Debug.LogError("WHERE'S STAN?!");
+        }
 	}
 
     [System.Serializable]
@@ -132,7 +142,7 @@ public class Transition : MonoBehaviour {
 	[System.Serializable]
 	public class EnableEvent : TransitionEvent
 	{
-        public GameObject obj;
+        public GameObject[] obj;
         public bool active = true;
 	}
 

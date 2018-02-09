@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class Sequencer : MonoBehaviour {
-    
+
+    public bool autoStart;
     public bool easyMode;
 
     public Transform screenParent;
@@ -14,11 +16,31 @@ public class Sequencer : MonoBehaviour {
 
     public MeshRenderer monitor;
     public MeshRenderer screenOverlay;
+    public CinemachineVirtualCamera menuCam;
 
     private void Start()
     {
-        StartTransition();
+
+        if (autoStart)
+        {
+            Begin();
+        }
     }
+
+    public void Begin()
+    {
+        if (!FindObjectOfType<SceneState>().inMenuState)
+        {
+            FindObjectOfType<SceneState>().SetMenuState();
+        }
+        else
+        {
+            menuCam.Priority = 0;
+        }
+
+		StartTransition();
+
+	}
 
     void StartTransition()
     {
@@ -43,6 +65,7 @@ public class Sequencer : MonoBehaviour {
 
     void SpawnTask()
     {
+        menuCam.Priority = 5;
    
         if (taskIndex < tasks.Length)
         {
@@ -102,4 +125,6 @@ public class Sequencer : MonoBehaviour {
     {
         SpawnTask();
     }
+
+  
 }

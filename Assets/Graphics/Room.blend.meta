@@ -47,6 +47,9 @@ ModelImporter:
     100078: BezierCurve_003
     100080: Cube_017
     100082: Cube_018
+    100084: Cylinder_004
+    100086: Cylinder_005
+    100088: Light_source
     400000: Chair
     400002: Cube
     400004: Cube_001
@@ -89,6 +92,9 @@ ModelImporter:
     400078: BezierCurve_003
     400080: Cube_017
     400082: Cube_018
+    400084: Cylinder_004
+    400086: Cylinder_005
+    400088: Light_source
     2100000: Wall
     2100002: Brushed_metal
     2100004: Chair
@@ -130,6 +136,7 @@ ModelImporter:
     2100076: Street
     2100078: Door
     2100080: Knob
+    2100082: Darklight
     2300000: Chair
     2300002: Cube
     2300004: Cube_001
@@ -171,6 +178,9 @@ ModelImporter:
     2300076: BezierCurve_003
     2300078: Cube_017
     2300080: Cube_018
+    2300082: Cylinder_004
+    2300084: Cylinder_005
+    2300086: Light_source
     3300000: Chair
     3300002: Cube
     3300004: Cube_001
@@ -212,6 +222,9 @@ ModelImporter:
     3300076: BezierCurve_003
     3300078: Cube_017
     3300080: Cube_018
+    3300082: Cylinder_004
+    3300084: Cylinder_005
+    3300086: Light_source
     4300000: Plane_008
     4300002: Cube_011
     4300004: Cube
@@ -253,6 +266,9 @@ ModelImporter:
     4300076: Cube_017
     4300078: BezierCurve_003
     4300080: Cube_018
+    4300082: Cylinder_005
+    4300084: Cylinder_004
+    4300086: Light_source
     7400000: Default Take
     9500000: //RootNode
   externalObjects:

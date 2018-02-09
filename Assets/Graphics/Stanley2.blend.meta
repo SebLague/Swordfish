@@ -280,7 +280,7 @@ ModelImporter:
       name: Intro_2
       takeName: Intro_2
       firstFrame: 0
-      lastFrame: 54
+      lastFrame: 105
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -299,7 +299,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.5780591
+        functionName: MusicPlay
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0e36552cf0c124095b73504f6b7f428b,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

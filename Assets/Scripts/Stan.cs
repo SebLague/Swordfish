@@ -8,7 +8,7 @@ public class Stan : MonoBehaviour {
     Animator anim;
     float noInputTime;
     float targetTypeBlend;
-
+    public MeshRenderer screenOverlay;
     public Text dialogueUI;
 
 	void Start () {
@@ -48,4 +48,10 @@ public class Stan : MonoBehaviour {
     {
         dialogueUI.text = "";
     }
+
+	public void MusicPlay()
+	{
+        screenOverlay.material.color = Color.clear;
+		print("Music");
+	}
 }
