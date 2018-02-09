@@ -23,6 +23,9 @@ public class Missile : MonoBehaviour {
     public float timeBetweenTargetUpdates = .1f;
     Vector2 retargetDir;
     float endRetargetTime;
+    public float noiseFac = .3f;
+    Vector2 screenMinMaxX;
+    Vector2 screenMinMaxY;
 
     Vector2 currV;
     Vector2 smoothV;
@@ -37,6 +40,8 @@ public class Missile : MonoBehaviour {
 	void Start () {
         target = FindObjectOfType<Dodger>();
         myCol = GetComponent<Collider2D>();
+		screenMinMaxX = FindObjectOfType<ScreenAreas>().minMaxX;
+		screenMinMaxY = FindObjectOfType<ScreenAreas>().minMaxY;
 	}
 	
 	// Update is called once per frame
@@ -70,7 +75,7 @@ public class Missile : MonoBehaviour {
             Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
 
             float angleToTarget = Vector2.Angle(transform.up, dirToTarget);
-            if (angleToTarget > 75 && angleToTarget < 105)
+            if (angleToTarget > 90-30 && angleToTarget < 90+30)
             {
                 timeCircling += Time.deltaTime;
             }
@@ -80,10 +85,12 @@ public class Missile : MonoBehaviour {
             }
             if (dstToTarget < retargetThresholdDst && timeCircling > circleTimeBeforeRetarget && Time.time-lastRetargetTime>timeBetweenRetargets)
             {
+               // print("Send: " + timeCircling);
                 retargetDir = Random.insideUnitCircle.normalized;
                 endRetargetTime = Time.time + retargetTime;
                 lastRetargetTime = endRetargetTime;
                 timeCircling = 0;
+
             }
            
             //float currSmoothTime = Mathf.Lerp(0,slerpSpeed, (dstToTarget - .3f));
@@ -93,6 +100,7 @@ public class Missile : MonoBehaviour {
         }
         else
         {
+            
             targetDir = retargetDir;
         }
         Vector2 targetV = targetDir * speed;
@@ -110,20 +118,27 @@ public class Missile : MonoBehaviour {
     Vector2 EstimatePointOfImpact()
     {
         //return target.transform.position;
-        int iterations = 3;
         Vector2 initialTargetPos = target.transform.position;
         Vector2 estimatedImpactPos = initialTargetPos;
         Vector2 targetDir = target.targetV.normalized;
 
-		for (int i = 0; i < iterations; i++)
+        float dstToTarget = ((Vector2)transform.position - estimatedImpactPos).magnitude;
+		float timeToImpact = dstToTarget / speed;
+        //print(dstToTarget + " t: " + timeToImpact);
+        estimatedImpactPos = initialTargetPos + targetDir * timeToImpact * target.speed;
+		estimatedImpactPos = new Vector2(Mathf.Clamp(estimatedImpactPos.x, screenMinMaxX.x, screenMinMaxX.y), Mathf.Clamp(estimatedImpactPos.y, screenMinMaxY.x, screenMinMaxY.y));
+
+		Vector2 myPos = transform.position;
+        float angle = Vector2.Angle((estimatedImpactPos - myPos), (initialTargetPos - myPos));
+       
+        Vector2 noise = Random.insideUnitCircle * noiseFac;
+        if (angle > 90)
         {
-            float dstToTarget = ((Vector2)transform.position - estimatedImpactPos).magnitude;
-			float timeToImpact = dstToTarget / speed;
-            //print(dstToTarget + " t: " + timeToImpact);
-            estimatedImpactPos = initialTargetPos + targetDir * timeToImpact * target.speed;
+            return initialTargetPos + noise;
         }
 
-        return estimatedImpactPos + Random.insideUnitCircle * targetNoise;
+
+        return estimatedImpactPos + noise;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -167,7 +182,8 @@ public class Missile : MonoBehaviour {
         if (Application.isPlaying)
         {
             Gizmos.color = Color.red;
-           // Gizmos.DrawSphere(EstimatePointOfImpact(), .1f);
+            //Gizmos.DrawSphere(EstimatePointOfImpact(), .1f);
+            Gizmos.DrawSphere(targetPoint, .1f);
 
         }
     }

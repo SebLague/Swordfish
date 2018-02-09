@@ -6,7 +6,6 @@ public class DodgeGame : MonoBehaviour {
 
     public Missile missilePrefab;
     public Transform[] possibleSpawns;
-    public Vector2 delayStartEnd;
 
     float nextSpawnTime;
     public int duration = 64;
@@ -15,11 +14,13 @@ public class DodgeGame : MonoBehaviour {
     public int max = 20;
     Transform player;
     int curr;
+    float delay;
 
     void Start()
     {
         timeRemaining = duration;
         player = FindObjectOfType<Dodger>().transform;
+        delay = (duration - 10) / (float)(max);
     }
 
 	void Update () {
@@ -40,7 +41,12 @@ public class DodgeGame : MonoBehaviour {
                 }
 
             }
-            nextSpawnTime = Time.time + Mathf.Lerp(delayStartEnd.x, delayStartEnd.y, percent);
+            float currDelay = delay;
+            if (curr == 1)
+            {
+                currDelay = 4;
+            }
+            nextSpawnTime = Time.time + delay;
 
             Missile missile = Instantiate(missilePrefab);
             missile.transform.position = pos;

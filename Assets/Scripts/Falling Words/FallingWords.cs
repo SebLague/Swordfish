@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class FallingWords : MonoBehaviour {
+public class FallingWords : Task {
 
     public GameObject validAreas;
     public TextAsset t;
@@ -53,7 +53,7 @@ public class FallingWords : MonoBehaviour {
         {
             percentDoneWithFirstWord = inputString.Length / (float)activeWords[0].word.Length;
         }
-        print(percentDoneWithFirstWord);
+       
 
         if (wordIndex < words.Length)
         {
@@ -96,7 +96,7 @@ public class FallingWords : MonoBehaviour {
 
 			if (word.mesh.transform.position.y < destroyHeight)
 			{
-				OnWordFailed();
+				TaskFailed();
                 activeWords.Remove(word);
 				if (potentialWordMatches.Contains(word))
 				{
@@ -118,7 +118,7 @@ public class FallingWords : MonoBehaviour {
 
         if (activeWords.Count == 0 && allWordsSpawned && !done)
         {
-            OnComplete();
+            TaskCompleted();
         }
 	}
 
@@ -147,14 +147,15 @@ public class FallingWords : MonoBehaviour {
 
 	}
 
-    void OnComplete()
+    protected override void TaskCompleted()
     {
+        base.TaskCompleted();
         done = true;
     }
 
-    void OnWordFailed()
+    protected override void TaskFailed()
     {
-
+        base.TaskFailed();
     }
 
     void OnWordSucceeded()

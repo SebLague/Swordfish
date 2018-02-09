@@ -17,7 +17,7 @@ public class Stan : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            anim.SetTrigger("Spin");
+           // anim.SetTrigger("Spin");
         }
 
         if (Input.inputString.Length > 0)
