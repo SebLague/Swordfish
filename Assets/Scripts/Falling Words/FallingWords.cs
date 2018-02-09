@@ -24,9 +24,12 @@ public class FallingWords : MonoBehaviour {
     List<Word> potentialWordMatches;
     string inputString;
     bool allWordsSpawned;
+    bool spawnedFirst;
+    bool spawnedSecond;
 
 	// Use this for initialization
 	void Start () {
+        inputString = "";
         activeWords = new List<Word>();
         potentialWordMatches = new List<Word>();
 
@@ -45,20 +48,39 @@ public class FallingWords : MonoBehaviour {
 		float completionPercent = wordIndex / ((float)words.Length - 1);
         float speed = Mathf.Lerp(speedMinMax.x, speedMinMax.y, completionPercent);
 
+        float percentDoneWithFirstWord = 0;
+        if (activeWords.Count > 0)
+        {
+            percentDoneWithFirstWord = inputString.Length / (float)activeWords[0].word.Length;
+        }
+        print(percentDoneWithFirstWord);
+
         if (wordIndex < words.Length)
         {
-           
-            if ((Time.time > nextSpawnTime && wordIndex!=words.Length-1 && wordIndex != 1) || activeWords.Count==0)
+            if (wordIndex < words.Length - 2 || activeWords.Count == 0)
             {
+                if (activeWords.Count < 3)
+                {
+                    if (activeWords.Count == 0 || ((percentDoneWithFirstWord > .3f && !spawnedFirst) || (percentDoneWithFirstWord > .75f && !spawnedSecond)))
+                    {
+                        if (percentDoneWithFirstWord > .3f)
+                        {
+                            spawnedFirst = true;
+                        }
+                        if (percentDoneWithFirstWord > .75f)
+                        {
+                            spawnedSecond = true;
+                        }
+                        TextMesh mesh = Instantiate<TextMesh>(textPrefab);
+                        mesh.text = words[wordIndex];
+                        PositionWord(mesh);
+                        activeWords.Add(new Word(words[wordIndex], mesh));
 
-                TextMesh mesh = Instantiate<TextMesh>(textPrefab);
-                mesh.text = words[wordIndex];
-                PositionWord(mesh);
-                activeWords.Add(new Word(words[wordIndex], mesh));
-
-                wordIndex++;
-                nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x,delayMinMax.y,completionPercent);
-                potentialWordMatches = new List<Word>(activeWords);
+                        wordIndex++;
+                        nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
+                        potentialWordMatches = new List<Word>(activeWords);
+                    }
+                }
             }
         }
         else
@@ -88,8 +110,11 @@ public class FallingWords : MonoBehaviour {
 			}
         }
 
-
-        HandleInput();
+        if (activeWords.Count > 0)
+        {
+            activeWords[0].mesh.color = Color.white;
+            HandleInput();
+        }
 
         if (activeWords.Count == 0 && allWordsSpawned && !done)
         {
@@ -134,7 +159,8 @@ public class FallingWords : MonoBehaviour {
 
     void OnWordSucceeded()
     {
-
+        spawnedFirst = false;
+        spawnedSecond = false;
     }
 
     void HandleInput()
@@ -146,14 +172,13 @@ public class FallingWords : MonoBehaviour {
             bool newInputStringValid = false;
             string newInputString = inputString + c;
 
-            foreach (Word word in activeWords)
+            Word word = activeWords[0];
+            if (word.word.StartsWith(newInputString,System.StringComparison.CurrentCulture))
             {
-                if (word.word.StartsWith(newInputString,System.StringComparison.CurrentCulture))
-                {
-                    newInputStringValid = true;
-                    hasChanged = true;
-                }
+                newInputStringValid = true;
+                hasChanged = true;
             }
+        
 
             if (newInputStringValid)
             {

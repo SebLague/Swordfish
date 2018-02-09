@@ -99,7 +99,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1610751038605170}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: -1}
-  m_LocalPosition: {x: 41.15, y: 1.523, z: -0.017747942}
+  m_LocalPosition: {x: 36.494694, y: -1.9384747, z: -0.017747942}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4153648771087796}
@@ -202,7 +202,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.22}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -213,7 +213,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.08, y: 0.49}
+  m_Size: {x: 0.12, y: 0.13}
   m_EdgeRadius: 0
 --- !u!95 &95215195179852098
 Animator:
@@ -244,15 +244,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosion: {fileID: 1181577652728322, guid: 499bfc98e27454122b8308ae3399d676, type: 2}
-  speed: 3.5
-  slerpSpeed: 1.5
-  detractionForce: 2
+  speed: 2.2
+  slerpSpeed: 2.5
+  detractionForce: 2.5
   detractionRadius: 1
   targetNoise: 0
-  retargetTime: 1.7
-  retargetThresholdDst: 3
+  retargetTime: 1.5
+  retargetThresholdDst: 2
   timeBetweenRetargets: 2
-  circleTimeBeforeRetarget: 1
+  circleTimeBeforeRetarget: 1.5
+  timeBetweenTargetUpdates: 0.85
   missileMask:
     serializedVersion: 2
     m_Bits: 1024

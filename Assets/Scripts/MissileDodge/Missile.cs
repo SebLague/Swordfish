@@ -20,7 +20,7 @@ public class Missile : MonoBehaviour {
     public float circleTimeBeforeRetarget = 1;
     float lastRetargetTime;
     float timeCircling;
-
+    public float timeBetweenTargetUpdates = .1f;
     Vector2 retargetDir;
     float endRetargetTime;
 
@@ -30,6 +30,8 @@ public class Missile : MonoBehaviour {
 
     Dodger target;
     Collider2D myCol;
+    Vector2 targetPoint;
+    float nextUpdateTime;
 
 	// Use this for initialization
 	void Start () {
@@ -58,8 +60,13 @@ public class Missile : MonoBehaviour {
         Vector2 targetDir = Vector2.zero;
         if (Time.time > endRetargetTime)
         {
+            if (Time.time > nextUpdateTime)
+            {
+                nextUpdateTime = Time.time + timeBetweenTargetUpdates;
+				targetPoint = EstimatePointOfImpact();
+            }
             float dstToTarget = (target.transform.position - transform.position).magnitude;
-            Vector2 targetPoint = EstimatePointOfImpact();
+           
             Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
 
             float angleToTarget = Vector2.Angle(transform.up, dirToTarget);
@@ -102,6 +109,7 @@ public class Missile : MonoBehaviour {
 
     Vector2 EstimatePointOfImpact()
     {
+        //return target.transform.position;
         int iterations = 3;
         Vector2 initialTargetPos = target.transform.position;
         Vector2 estimatedImpactPos = initialTargetPos;
