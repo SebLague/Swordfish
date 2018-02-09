@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Stan : MonoBehaviour {
 
     Animator anim;
     float noInputTime;
     float targetTypeBlend;
+
+    public Text dialogueUI;
 
 	void Start () {
         anim = GetComponent<Animator>();
@@ -34,5 +37,15 @@ public class Stan : MonoBehaviour {
             }
         }
         anim.SetFloat("Typing", targetTypeBlend, .5f, Time.deltaTime);
+    }
+
+    public void SayWithText(string text, AudioClip clip)
+    {
+        dialogueUI.text = text;
+    }
+
+    public void ClearDialogueText()
+    {
+        dialogueUI.text = "";
     }
 }

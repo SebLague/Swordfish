@@ -3,36 +3,57 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sequencer : MonoBehaviour {
+    public bool use;
+
     public Transform screenParent;
     public Task[] tasks;
     public int taskIndex;
     Task currentTask;
+    public Transition[] taskTransitions;
 
     public Material monitorMat;
     public Material screenOverlayMat;
 
     private void Start()
     {
-        SpawnTask();
+        if (use)
+        {
+            SpawnTask();
+
+        }
     }
 
-    void SpawnTask()
+    void StartTransition()
     {
-		currentTask = Instantiate(tasks[taskIndex]);
-        currentTask.transform.parent = screenParent;
-        currentTask.transform.localPosition = Vector3.zero;
-        currentTask.transform.localRotation = Quaternion.identity;
-		currentTask.OnLose += Restart;
-        currentTask.OnWin += NextTask;
-    }
-	
-    void NextTask()
-    {
-        taskIndex++;
-        if (taskIndex < tasks.Length)
+        if (taskIndex < taskTransitions.Length)
+        {
+            taskTransitions[taskIndex].OnComplete += SpawnTask;
+            taskTransitions[taskIndex].Begin();
+        }
+        else
         {
             SpawnTask();
         }
+    }
+
+
+    void SpawnTask()
+    {
+        if (taskIndex < tasks.Length)
+        {
+            currentTask = Instantiate(tasks[taskIndex]);
+            currentTask.transform.parent = screenParent;
+            currentTask.transform.localPosition = Vector3.zero;
+            currentTask.transform.localRotation = Quaternion.identity;
+            currentTask.OnLose += Restart;
+            currentTask.OnWin += TransitionToNextTask;
+        }
+    }
+	
+    void TransitionToNextTask()
+    {
+        taskIndex++;
+        StartTransition();
     }
 
     void Restart()
