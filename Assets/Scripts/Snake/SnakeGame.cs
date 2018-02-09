@@ -15,7 +15,14 @@ public class SnakeGame : Task {
     int numOnScreen;
     public TextMesh numRemText;
 
-    void Start()
+	public override void EnterEasyMode_Debug()
+	{
+		base.EnterEasyMode_Debug();
+        numToSpawn = 1;
+	}
+
+
+	void Start()
 
     {
         numLeftToSpawn = numToSpawn;

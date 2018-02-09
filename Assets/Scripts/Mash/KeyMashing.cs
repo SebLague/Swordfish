@@ -9,15 +9,16 @@ public class KeyMashing : Task {
     public Transform progressBar;
     int totalNum = 512;
     int num;
-    bool done;
-	// Use this for initialization
-	void Start () {
-		
+
+	public override void EnterEasyMode_Debug()
+	{
+		base.EnterEasyMode_Debug();
+        totalNum = 32;
 	}
-	
-	// Update is called once per frame
+
+
 	void Update () {
-        if (!done)
+        if (!taskOver)
         {
             if (Input.anyKeyDown)
             {
@@ -31,7 +32,6 @@ public class KeyMashing : Task {
 
             if (num == totalNum)
             {
-                done = true;
                 TaskCompleted();
             }
         }

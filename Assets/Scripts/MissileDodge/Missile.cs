@@ -35,6 +35,10 @@ public class Missile : MonoBehaviour {
     Collider2D myCol;
     Vector2 targetPoint;
     float nextUpdateTime;
+    bool lostTarget;
+    Vector2 targetV;
+    float selfDestructTime;
+    bool dead;
 
 	// Use this for initialization
 	void Start () {
@@ -43,67 +47,82 @@ public class Missile : MonoBehaviour {
 		screenMinMaxX = FindObjectOfType<ScreenAreas>().minMaxX;
 		screenMinMaxY = FindObjectOfType<ScreenAreas>().minMaxY;
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-        Vector2 detractDir = Vector2.zero;
-        Collider2D[] c = Physics2D.OverlapCircleAll(transform.position, detractionRadius, missileMask);
-        float detractForceFactor = 0;
-        foreach (Collider2D otherCol in c)
+    // Update is called once per frame
+    void Update()
+    {
+        if (target == null && !lostTarget)
         {
-            if (otherCol != myCol)
+            lostTarget = true;
+            selfDestructTime = Time.time + Random.Range(1, 2f);
+        }
+        if (lostTarget)
+        {
+            if (Time.time > selfDestructTime)
             {
-                Vector2 offset = -(otherCol.transform.position - transform.position);
-                detractDir += offset.normalized / offset.sqrMagnitude;
-                detractForceFactor += detractionRadius / offset.magnitude;
+                Explode(false);
             }
         }
-        detractDir.Normalize();
-        detractForceFactor = Mathf.Clamp01(detractForceFactor);
+        else {
 
-        Vector2 targetDir = Vector2.zero;
-        if (Time.time > endRetargetTime)
-        {
-            if (Time.time > nextUpdateTime)
+            Vector2 detractDir = Vector2.zero;
+            Collider2D[] c = Physics2D.OverlapCircleAll(transform.position, detractionRadius, missileMask);
+            float detractForceFactor = 0;
+            foreach (Collider2D otherCol in c)
             {
-                nextUpdateTime = Time.time + timeBetweenTargetUpdates;
-				targetPoint = EstimatePointOfImpact();
+                if (otherCol != myCol)
+                {
+                    Vector2 offset = -(otherCol.transform.position - transform.position);
+                    detractDir += offset.normalized / offset.sqrMagnitude;
+                    detractForceFactor += detractionRadius / offset.magnitude;
+                }
             }
-            float dstToTarget = (target.transform.position - transform.position).magnitude;
-           
-            Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
+            detractDir.Normalize();
+            detractForceFactor = Mathf.Clamp01(detractForceFactor);
 
-            float angleToTarget = Vector2.Angle(transform.up, dirToTarget);
-            if (angleToTarget > 90-30 && angleToTarget < 90+30)
+            Vector2 targetDir = Vector2.zero;
+            if (Time.time > endRetargetTime)
             {
-                timeCircling += Time.deltaTime;
+                if (Time.time > nextUpdateTime)
+                {
+                    nextUpdateTime = Time.time + timeBetweenTargetUpdates;
+                    targetPoint = EstimatePointOfImpact();
+                }
+                float dstToTarget = (target.transform.position - transform.position).magnitude;
+
+                Vector2 dirToTarget = (targetPoint - (Vector2)transform.position).normalized;
+
+                float angleToTarget = Vector2.Angle(transform.up, dirToTarget);
+                if (angleToTarget > 90 - 30 && angleToTarget < 90 + 30)
+                {
+                    timeCircling += Time.deltaTime;
+                }
+                else
+                {
+                    timeCircling = 0;
+                }
+                if (dstToTarget < retargetThresholdDst && timeCircling > circleTimeBeforeRetarget && Time.time - lastRetargetTime > timeBetweenRetargets)
+                {
+                    // print("Send: " + timeCircling);
+                    retargetDir = Random.insideUnitCircle.normalized;
+                    endRetargetTime = Time.time + retargetTime;
+                    lastRetargetTime = endRetargetTime;
+                    timeCircling = 0;
+
+                }
+
+                //float currSmoothTime = Mathf.Lerp(0,slerpSpeed, (dstToTarget - .3f));
+                // float currSlerpSpeed = Mathf.Lerp(maxSlerpSpeed, slerpSpeed, (dstToTarget - .3f));
+
+                targetDir = (dirToTarget * speed + detractDir * detractionForce * detractForceFactor).normalized;
             }
             else
             {
-                timeCircling = 0;
-            }
-            if (dstToTarget < retargetThresholdDst && timeCircling > circleTimeBeforeRetarget && Time.time-lastRetargetTime>timeBetweenRetargets)
-            {
-               // print("Send: " + timeCircling);
-                retargetDir = Random.insideUnitCircle.normalized;
-                endRetargetTime = Time.time + retargetTime;
-                lastRetargetTime = endRetargetTime;
-                timeCircling = 0;
 
+                targetDir = retargetDir;
             }
-           
-            //float currSmoothTime = Mathf.Lerp(0,slerpSpeed, (dstToTarget - .3f));
-            // float currSlerpSpeed = Mathf.Lerp(maxSlerpSpeed, slerpSpeed, (dstToTarget - .3f));
-
-            targetDir = (dirToTarget * speed + detractDir * detractionForce * detractForceFactor).normalized;
+            targetV = targetDir * speed;
         }
-        else
-        {
-            
-            targetDir = retargetDir;
-        }
-        Vector2 targetV = targetDir * speed;
 
         //currV = Vector2.SmoothDamp(currV, targetV, ref smoothV, currSmoothTime, float.MaxValue, Time.deltaTime);
         currV = Vector3.Slerp(currV, targetV, Time.deltaTime * slerpSpeed);
@@ -113,7 +132,6 @@ public class Missile : MonoBehaviour {
         transform.Translate(currV * Time.deltaTime,Space.World);
        
 	}
-
 
     Vector2 EstimatePointOfImpact()
     {
@@ -159,22 +177,26 @@ public class Missile : MonoBehaviour {
 
     void Explode(bool killPlayer)
     {
-        if (killPlayer)
+        if (!dead)
         {
-            if (OnPlayerDeath != null)
+            dead = true;
+            if (killPlayer)
             {
-                OnPlayerDeath();
+                if (OnPlayerDeath != null)
+                {
+                    OnPlayerDeath();
+                }
             }
+
+            if (OnDeath != null)
+            {
+                OnDeath();
+            }
+
+            Destroy(Instantiate(explosion, transform.position, Quaternion.identity), 2);
+
+            Destroy(gameObject);
         }
-
-        if (OnDeath != null)
-        {
-            OnDeath();
-        }
-
-        Destroy(Instantiate(explosion, transform.position, Quaternion.identity), 2);
-
-        Destroy(gameObject);
     }
 
     private void OnDrawGizmos()

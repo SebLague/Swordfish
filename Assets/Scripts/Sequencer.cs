@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sequencer : MonoBehaviour {
-    public bool use;
+    
+    public bool easyMode;
 
     public Transform screenParent;
     public Task[] tasks;
@@ -11,22 +12,25 @@ public class Sequencer : MonoBehaviour {
     Task currentTask;
     public Transition[] taskTransitions;
 
-    public Material monitorMat;
-    public Material screenOverlayMat;
+    public MeshRenderer monitor;
+    public MeshRenderer screenOverlay;
 
     private void Start()
     {
-        if (use)
-        {
-            SpawnTask();
-
-        }
+        StartTransition();
     }
 
     void StartTransition()
     {
+		if (currentTask != null)
+		{
+			Destroy(currentTask.gameObject);
+			currentTask = null;
+		}
+
         if (taskIndex < taskTransitions.Length)
         {
+            taskTransitions[taskIndex].gameObject.SetActive(true);
             taskTransitions[taskIndex].OnComplete += SpawnTask;
             taskTransitions[taskIndex].Begin();
         }
@@ -39,14 +43,21 @@ public class Sequencer : MonoBehaviour {
 
     void SpawnTask()
     {
+   
         if (taskIndex < tasks.Length)
         {
             currentTask = Instantiate(tasks[taskIndex]);
             currentTask.transform.parent = screenParent;
             currentTask.transform.localPosition = Vector3.zero;
             currentTask.transform.localRotation = Quaternion.identity;
+            currentTask.gameObject.SetActive(true);
             currentTask.OnLose += Restart;
             currentTask.OnWin += TransitionToNextTask;
+
+            if (easyMode && Application.isEditor)
+            {
+                currentTask.EnterEasyMode_Debug();
+            }
         }
     }
 	
@@ -68,14 +79,13 @@ public class Sequencer : MonoBehaviour {
         bool hasResetGame = false;
         while (p < 1)
         {
-            
             p += Time.deltaTime * .75f;
             // float brightnessPercent = Mathf.Clamp01(restartBrightnessCurve.Evaluate(p));
             float brightnessPercent = Mathf.Clamp01(-(p * 2 - 1) * (p * 2 - 1) + 1);
             //print(p+"  " + brightnessPercent);
-            monitorMat.SetColor("_EmissionColor", Color.white*brightnessPercent*3);
+            monitor.material.SetColor("_EmissionColor", Color.white*brightnessPercent*3);
             //screenOverlayMat.color = new Color(1, 1, 1, p);
-            screenOverlayMat.color = new Color(1, 1, 1, brightnessPercent);
+            screenOverlay.material.color = new Color(1, 1, 1, brightnessPercent);
             if (p >= .5f && !hasResetGame)
             {
                 Destroy(currentTask.gameObject);
@@ -83,7 +93,7 @@ public class Sequencer : MonoBehaviour {
             }
             yield return null;
         }
-        screenOverlayMat.color = Color.clear;
+        screenOverlay.material.color = Color.clear;
 
         OnRestartComplete();
     }

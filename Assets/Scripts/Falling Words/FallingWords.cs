@@ -26,6 +26,8 @@ public class FallingWords : Task {
     bool allWordsSpawned;
     bool spawnedFirst;
     bool spawnedSecond;
+    int numWordsDone;
+
 
 	// Use this for initialization
 	void Start () {
@@ -116,7 +118,8 @@ public class FallingWords : Task {
             HandleInput();
         }
 
-        if (activeWords.Count == 0 && allWordsSpawned && !done)
+        bool easyModeVictory = percentDoneWithFirstWord > 0 && inEasyMode_debug;
+        if ((activeWords.Count == 0 && allWordsSpawned || easyModeVictory) && !done)
         {
             TaskCompleted ();
         }
@@ -162,6 +165,7 @@ public class FallingWords : Task {
     {
         spawnedFirst = false;
         spawnedSecond = false;
+        numWordsDone++;
     }
 
     void HandleInput()

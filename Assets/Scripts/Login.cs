@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Login : MonoBehaviour {
+public class Login : Task {
 
     public InputField loginField;
     public Text attemptsRemainingUI;
@@ -20,13 +20,16 @@ public class Login : MonoBehaviour {
 	}
 	
 	void LateUpdate () {
-        if (loginNeedsFocus)
+        if (!taskOver)
         {
-            loginNeedsFocus = false;
-			loginField.Select();
-            loginField.ActivateInputField();
-            loginField.ForceLabelUpdate();
-		}
+            if (loginNeedsFocus)
+            {
+                loginNeedsFocus = false;
+                loginField.Select();
+                loginField.ActivateInputField();
+                loginField.ForceLabelUpdate();
+            }
+        }
 	}
 
     void ShowLoginPage()
@@ -37,9 +40,12 @@ public class Login : MonoBehaviour {
 
     void OnEndEdit(string s)
     {
-        SubmitInput(s);
-        loginField.text = "";
-        loginNeedsFocus = true;
+        if (!taskOver)
+        {
+            SubmitInput(s);
+            loginField.text = "";
+            loginNeedsFocus = true;
+        }
     }
 
     void SubmitInput(string enteredPassword)
@@ -57,16 +63,21 @@ public class Login : MonoBehaviour {
     void OnCorrectPassword()
     {
 		print("Win");
+        TaskCompleted();
     }
 
     void OnIncorrectPassword()
     {
-        attemptsRemaining--;
-        attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
-
-        if (attemptsRemaining <= 0)
+        if (attemptsRemaining > 0)
         {
-            print("Game over");
+            attemptsRemaining--;
+            attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
+
+            if (attemptsRemaining == 0)
+            {
+                print("Game over");
+                TaskFailed();
+            }
         }
     }
 }
