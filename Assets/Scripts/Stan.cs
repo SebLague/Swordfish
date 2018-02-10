@@ -15,6 +15,16 @@ public class Stan : MonoBehaviour {
     public int debugAnimIndex;
     public int numFailAnims = 5;
     Queue<int> failAnimIndexQueue;
+    public AudioClip music;
+    public AudioSource musicSource;
+	public AudioSource voiceSource;
+
+    public AudioClip[] taskOneAudio;
+    int taskAudioIndex;
+    float previousVoiceEndTime;
+    public AudioClip[] taskFailAudio;
+    public AudioClip[] taskWinAudio;
+    public AudioClip keySlam;
 
     void Start()
     {
@@ -68,12 +78,20 @@ public class Stan : MonoBehaviour {
         failAnimIndexQueue.Enqueue(failIndex);
         anim.SetFloat("Index", failIndex);
 		anim.SetTrigger("Fail");
+        if (taskFailAudio != null && taskFailAudio.Length > 0)
+        {
+            PlayVoiceImmediate(taskFailAudio[Random.Range(0, taskFailAudio.Length)]);
+        }
     }
 
     public void OnTaskSuccess(int i)
     {
 		anim.SetFloat("Index", i);
 		anim.SetTrigger("Victory");
+        if (taskWinAudio != null && taskWinAudio.Length > 0)
+        {
+            PlayVoiceImmediate(taskWinAudio[Random.Range(0, taskWinAudio.Length)]);
+        }
     }
 
     public void OnWinGame()
@@ -89,6 +107,10 @@ public class Stan : MonoBehaviour {
     public void SayWithText(string text, AudioClip clip)
     {
         dialogueUI.text = text;
+        if (clip != null)
+        {
+            PlayVoiceImmediate(clip);
+        }
     }
 
     public void ClearDialogueText()
@@ -96,9 +118,36 @@ public class Stan : MonoBehaviour {
         dialogueUI.text = "";
     }
 
+    public void ResetTaskOneAudio()
+    {
+        taskAudioIndex = 0;
+    }
+    public void PlayNextTaskOneAudio()
+    {
+        if (taskAudioIndex < taskOneAudio.Length)
+        {
+            if (Time.time > previousVoiceEndTime+1)
+            {
+                PlayVoiceImmediate(taskOneAudio[taskAudioIndex]);
+            }
+            
+            taskAudioIndex++;
+        }
+    }
+
 	public void MusicPlay()
 	{
         screenOverlay.material.color = Color.clear;
-		print("Music");
+        musicSource.clip = music;
+        musicSource.volume = 1;
+        musicSource.Play();
+        Sfx.Play(keySlam);
 	}
+
+    void PlayVoiceImmediate(AudioClip clip)
+    {
+		voiceSource.clip = clip;
+		voiceSource.Play();
+		previousVoiceEndTime = Time.time + clip.length;
+    }
 }

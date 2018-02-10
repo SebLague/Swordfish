@@ -27,10 +27,14 @@ public class FallingWords : Task {
     bool spawnedFirst;
     bool spawnedSecond;
     int numWordsDone;
-
+    bool requestedVoice;
+    Stan stan;
 
 	// Use this for initialization
 	void Start () {
+        stan = FindObjectOfType<Stan>();
+        stan.ResetTaskOneAudio();
+
         inputString = "";
         activeWords = new List<Word>();
         potentialWordMatches = new List<Word>();
@@ -55,7 +59,12 @@ public class FallingWords : Task {
         {
             percentDoneWithFirstWord = inputString.Length / (float)activeWords[0].word.Length;
         }
-       
+
+        if (percentDoneWithFirstWord > .3f && !requestedVoice)
+        {
+			stan.PlayNextTaskOneAudio();
+            requestedVoice = true;
+        }
 
         if (wordIndex < words.Length)
         {
@@ -166,6 +175,7 @@ public class FallingWords : Task {
         spawnedFirst = false;
         spawnedSecond = false;
         numWordsDone++;
+        requestedVoice = false;
     }
 
     void HandleInput()

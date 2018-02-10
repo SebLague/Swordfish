@@ -20,6 +20,7 @@ public class Menu : MonoBehaviour {
     public Image fadePlane;
     bool readyToSkip;
     public MeshRenderer screenOverlay;
+    public AudioClip[] keyAudio;
 
     Coroutine startRoutine;
     Coroutine textRoutine;
@@ -56,9 +57,11 @@ public class Menu : MonoBehaviour {
         {
             title.text = titleAnim[titleAnimIndex].text;
             titleAnimIndex++;
+            Sfx.Play(keyAudio[Random.Range(0, keyAudio.Length)]);
 
             if (titleAnimIndex < titleAnim.Length)
             {
+                
                 yield return new WaitForSeconds(titleAnim[titleAnimIndex].delay);
             }
         }
@@ -102,8 +105,10 @@ public class Menu : MonoBehaviour {
 
         for (int i = 0; i < targetString.Length; i++)
         {
-            subtitle.text += targetString[i];
-            yield return new WaitForSeconds(.03f);
+			Sfx.Play(keyAudio[Random.Range(0, keyAudio.Length)], .4f);
+
+			subtitle.text += targetString[i];
+            yield return new WaitForSeconds(Random.Range(.025f, .035f));
         }
 
         yield return new WaitForSeconds(1);
