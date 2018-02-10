@@ -11,16 +11,39 @@ public class Stan : MonoBehaviour {
     public MeshRenderer screenOverlay;
     public Text dialogueUI;
 
-	void Start () {
+    public bool debugAnims;
+    public int debugAnimIndex;
+    public int numFailAnims = 5;
+    Queue<int> failAnimIndexQueue;
+
+    void Start()
+    {
         anim = GetComponent<Animator>();
-	}
+
+        int[] failIndices = new int[numFailAnims];
+        for (int i = 0; i < numFailAnims; i++)
+        {
+            failIndices[i] = i;
+        }
+        Utility.Shuffle(failIndices);
+        failAnimIndexQueue = new Queue<int>(failIndices);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (debugAnims && Application.isEditor)
         {
-           // anim.SetTrigger("Spin");
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+				anim.SetFloat("Index", debugAnimIndex);
+                anim.SetTrigger("Fail");
+            }
+			if (Input.GetKeyDown(KeyCode.V))
+			{
+				anim.SetFloat("Index", debugAnimIndex);
+				anim.SetTrigger("Victory");
+			}
         }
 
         if (Input.inputString.Length > 0)
@@ -38,6 +61,30 @@ public class Stan : MonoBehaviour {
         }
         anim.SetFloat("Typing", targetTypeBlend, .5f, Time.deltaTime);
     }
+
+    public void OnTaskFail()
+    {
+        int failIndex = failAnimIndexQueue.Dequeue();
+        failAnimIndexQueue.Enqueue(failIndex);
+        anim.SetFloat("Index", failIndex);
+		anim.SetTrigger("Fail");
+    }
+
+    public void OnTaskSuccess(int i)
+    {
+		anim.SetFloat("Index", i);
+		anim.SetTrigger("Victory");
+    }
+
+    public void OnWinGame()
+    {
+        anim.SetTrigger("Win Game");
+    }
+
+	public void OnLoseGame()
+	{
+        anim.SetTrigger("Lose Game");
+	}
 
     public void SayWithText(string text, AudioClip clip)
     {

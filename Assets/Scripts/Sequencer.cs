@@ -102,6 +102,7 @@ public class Sequencer : MonoBehaviour {
 
     IEnumerator RestartSequence(float delay)
     {
+        FindObjectOfType<Stan>().OnTaskFail();
         yield return new WaitForSeconds(delay);
         float p = 0;
         bool hasResetGame = false;
@@ -135,11 +136,13 @@ public class Sequencer : MonoBehaviour {
     public void GameWin()
     {
         print("win");
+        FindObjectOfType<Stan>().OnWinGame();
     }
 
     public void GameLose()
     {
 		print("lose");
+        FindObjectOfType<Stan>().OnLoseGame();
     }
   
 }

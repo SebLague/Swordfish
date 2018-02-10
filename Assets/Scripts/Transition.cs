@@ -11,6 +11,7 @@ public class Transition : MonoBehaviour {
     public List<FadeEvent> fadeEvents;
 	public List<EnableEvent> enableEvents;
     public List<DialogueEvent> dialogueEvents;
+    public int winAnimationIndex = -1;
 
     List<FadeEvent> remainingFadeEvents = new List<FadeEvent>();
     List<EnableEvent> remainingEnableEvents = new List<EnableEvent>();
@@ -36,6 +37,11 @@ public class Transition : MonoBehaviour {
 
         endTime = Mathf.Max(MaxEndTime(fadeEvents),MaxEndTime(enableEvents),MaxEndTime(dialogueEvents));
         active = true;
+
+		if (winAnimationIndex != -1)
+		{
+			FindObjectOfType<Stan>().OnTaskSuccess(winAnimationIndex);
+		}
     }
 
     float LocalTime

@@ -169,6 +169,7 @@ MonoBehaviour:
     duration: 3
     text: Phewf, that was close. Now I just need to break their encryption.
     audio: {fileID: 0}
+  winAnimationIndex: 2
 --- !u!1 &27040276
 GameObject:
   m_ObjectHideFlags: 0
@@ -8508,7 +8509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &374524150
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16435,6 +16436,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screenOverlay: {fileID: 957461276}
   dialogueUI: {fileID: 83451462}
+  debugAnims: 0
+  debugAnimIndex: 0
+  numFailAnims: 5
 --- !u!1 &795199289
 GameObject:
   m_ObjectHideFlags: 0
@@ -21438,6 +21442,7 @@ MonoBehaviour:
     text: Piece of cake! Now I just need to figure out the password from this hints
       file...
     audio: {fileID: 0}
+  winAnimationIndex: 3
 --- !u!1001 &1380576238
 Prefab:
   m_ObjectHideFlags: 0
@@ -29336,7 +29341,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400058, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.09841763
+      value: 0.09841761
       objectReference: {fileID: 0}
     - target: {fileID: 400032, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_LocalRotation.x
@@ -29360,7 +29365,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.012642339
+      value: 0.012642336
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_LocalRotation.z
@@ -29368,7 +29373,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.01264234
+      value: 0.012642337
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: 5808c8a05722846fe90aad650431a3f4, type: 3}
       propertyPath: m_ReceiveShadows
@@ -33052,7 +33057,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -22.496666, y: -196.09253}
+  m_AnchoredPosition: {x: -22.496666, y: -290.13}
   m_SizeDelta: {x: 1553.7, y: 37.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1678490577
@@ -33181,6 +33186,7 @@ MonoBehaviour:
     duration: 3
     text: I need to use the hydra to sniff out the latent digital footprints...
     audio: {fileID: 0}
+  winAnimationIndex: 0
 --- !u!1 &1714768092
 GameObject:
   m_ObjectHideFlags: 0
@@ -37137,6 +37143,7 @@ MonoBehaviour:
     duration: 2
     text: Intro test
     audio: {fileID: 0}
+  winAnimationIndex: -1
 --- !u!1 &1817120431
 GameObject:
   m_ObjectHideFlags: 0
@@ -37399,6 +37406,7 @@ MonoBehaviour:
     duration: 3
     text: Crap! The firewall has locked me in. Antivirus missiles incoming!
     audio: {fileID: 0}
+  winAnimationIndex: 1
 --- !u!1 &1888521312
 GameObject:
   m_ObjectHideFlags: 0
@@ -41232,10 +41240,6 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 149191046}
-    - target: {fileID: 1042174172835944, guid: 44604346a2c8c4bf6a6b0d7081f925ac, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 44604346a2c8c4bf6a6b0d7081f925ac, type: 2}
   m_IsPrefabParent: 0
@@ -41319,7 +41323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.9812373, b: 0.72794116, a: 0.359}
+  m_Color: {r: 1, g: 0.9832657, b: 0.75735295, a: 0.216}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -41327,8 +41331,8 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 444c2ae92ff894f4ca914d6db5938195, type: 3}
-    m_FontSize: 62
+    m_Font: {fileID: 12800000, guid: d2b5b123f22bb45998318b1d0c8b4067, type: 3}
+    m_FontSize: 54
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -41339,7 +41343,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: created for the movie game jam 2018
+  m_Text: created for the movie game jam
 --- !u!222 &2066507991
 CanvasRenderer:
   m_ObjectHideFlags: 0
