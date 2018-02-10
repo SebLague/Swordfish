@@ -30,7 +30,7 @@ public class Snake : MonoBehaviour
     bool dead;
     static List<MoveData> headPoints;
 
-    Vector2 initialDirection = Vector2.right;
+    Vector2 initialDirection = Vector2.up;
     Vector2 dirOld;
 
     public float smoothMoveTime = .1f;

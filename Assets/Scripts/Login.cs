@@ -7,13 +7,21 @@ public class Login : Task {
 
     public InputField loginField;
     public Text attemptsRemainingUI;
+    public Text hintsUI;
+    public GameObject mainScreen;
+    public GameObject denied;
+	public GameObject granted;
 
+    string fullHintsTxt;
+    bool showingMessage;
     bool loginNeedsFocus;
     int attemptsRemaining = 3;
 
-    string actualPassword = "test";
+    string actualPassword = "swordfish";
 	
 	void Start () {
+        fullHintsTxt = hintsUI.text;
+        hintsUI.text = fullHintsTxt.Split('\n')[0];
         attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
         loginField.onEndEdit.AddListener(OnEndEdit);
         ShowLoginPage();
@@ -40,7 +48,7 @@ public class Login : Task {
 
     void OnEndEdit(string s)
     {
-        if (!taskOver)
+        if (!taskOver && !showingMessage)
         {
             SubmitInput(s);
             loginField.text = "";
@@ -50,20 +58,24 @@ public class Login : Task {
 
     void SubmitInput(string enteredPassword)
     {
-        if (actualPassword.ToLower() == enteredPassword.ToLower())
+        if (enteredPassword.Length > 0)
         {
-            OnCorrectPassword();
-        }
-        else
-        {
-            OnIncorrectPassword();
+            if (actualPassword.ToLower() == enteredPassword.ToLower())
+            {
+                OnCorrectPassword();
+            }
+            else
+            {
+                OnIncorrectPassword();
+            }
         }
     }
 
     void OnCorrectPassword()
     {
-		print("Win");
+        StartCoroutine(Message(true, true));
         TaskCompleted();
+        FindObjectOfType<Sequencer>().GameWin();
     }
 
     void OnIncorrectPassword()
@@ -75,9 +87,40 @@ public class Login : Task {
 
             if (attemptsRemaining == 0)
             {
-                print("Game over");
+                StartCoroutine(Message(false, true));
                 TaskFailed();
+                FindObjectOfType<Sequencer>().GameLose();
+            }
+            else
+            {
+                StartCoroutine(Message(false, false));
             }
         }
+    }
+
+    IEnumerator Message(bool accessGranted, bool loopForever)
+    {
+        showingMessage = true;
+        mainScreen.SetActive(false);
+        GameObject m = (accessGranted) ? granted : denied;
+        int i = 3;
+        while (i > 0 || loopForever)
+        {
+            i--;
+			yield return new WaitForSeconds(.2f);
+			m.SetActive(true);
+            yield return new WaitForSeconds(.5f);
+            m.SetActive(false);
+			
+        }
+
+        if (!accessGranted)
+        {
+            hintsUI.text += "\n"+fullHintsTxt.Split('\n')[3 - attemptsRemaining];
+        }
+
+        m.SetActive(false);
+        mainScreen.SetActive(true);
+        showingMessage = false;
     }
 }

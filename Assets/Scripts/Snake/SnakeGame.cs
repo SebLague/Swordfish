@@ -21,11 +21,18 @@ public class SnakeGame : Task {
         numToSpawn = 1;
 	}
 
+    private void Awake()
+    {
+       
+    }
 
-	void Start()
+    void Start()
 
     {
-        numLeftToSpawn = numToSpawn;
+		numLeftToSpawn = numToSpawn;
+		numRemText.text = numEaten + "/" + numToSpawn;
+        numRemText.gameObject.SetActive(true);
+
         screens = FindObjectOfType<ScreenAreas>().allScreens;
         FindObjectOfType<Snake>().OnEat += OnEat;
         FindObjectOfType<Snake>().OnDeathEvent += TaskFailed;

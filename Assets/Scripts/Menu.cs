@@ -10,10 +10,9 @@ public class Menu : MonoBehaviour {
     public Text title;
     public Text subtitle;
     public Text instruction;
- 
 
     bool keyPressed;
-    public float fadeTime = 1;
+    public float fadeTime = .5f;
     public TypingAnim[] titleAnim;
     int titleAnimIndex;
     float timeSinceLastTitleAnim;
@@ -34,7 +33,7 @@ public class Menu : MonoBehaviour {
 
         if (autoPlay)
         {
-            readyToSkip = true;
+            
             playing = true;
             startRoutine = StartCoroutine(StartUpRoutine());
         }
@@ -73,20 +72,23 @@ public class Menu : MonoBehaviour {
             if (Input.anyKeyDown && !keyPressed && readyToSkip)
             {
                 keyPressed = true;
+				
                 if (startRoutine != null)
                 {
                     StopCoroutine(startRoutine);
                 }
-                if (textRoutine != null)
+				
+				if (textRoutine != null)
                 {
                     StopCoroutine(textRoutine);
                 }
-
+				
                 FindObjectOfType<Sequencer>().Begin();
                 title.gameObject.SetActive(false);
                 subtitle.gameObject.SetActive(false);
                 instruction.gameObject.SetActive(false);
-            }
+
+			}
         }
 	}
 

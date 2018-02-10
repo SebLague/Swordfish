@@ -50,6 +50,11 @@ public class Sequencer : MonoBehaviour {
 			currentTask = null;
 		}
 
+        if (taskIndex > 0)
+        {
+            taskTransitions[taskIndex - 1].gameObject.SetActive(false);
+        }
+
         if (taskIndex < taskTransitions.Length)
         {
             taskTransitions[taskIndex].gameObject.SetActive(true);
@@ -70,14 +75,14 @@ public class Sequencer : MonoBehaviour {
         if (taskIndex < tasks.Length)
         {
             currentTask = Instantiate(tasks[taskIndex]);
-            currentTask.transform.parent = screenParent;
+            currentTask.transform.SetParent(screenParent);
             currentTask.transform.localPosition = Vector3.zero;
             currentTask.transform.localRotation = Quaternion.identity;
             currentTask.gameObject.SetActive(true);
             currentTask.OnLose += Restart;
             currentTask.OnWin += TransitionToNextTask;
 
-            if (easyMode && Application.isEditor)
+            if (easyMode)
             {
                 currentTask.EnterEasyMode_Debug();
             }
@@ -126,5 +131,15 @@ public class Sequencer : MonoBehaviour {
         SpawnTask();
     }
 
+
+    public void GameWin()
+    {
+        print("win");
+    }
+
+    public void GameLose()
+    {
+		print("lose");
+    }
   
 }

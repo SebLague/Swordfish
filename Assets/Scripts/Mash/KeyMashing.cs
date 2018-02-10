@@ -16,8 +16,12 @@ public class KeyMashing : Task {
         totalNum = 32;
 	}
 
+    private void Start()
+    {
+		progressBar.localScale = new Vector3(0, 1, 1);
+    }
 
-	void Update () {
+    void Update () {
         if (!taskOver)
         {
             if (Input.anyKeyDown)
@@ -26,7 +30,7 @@ public class KeyMashing : Task {
                 num = Mathf.Clamp(num, 0, totalNum);
             }
 
-            progressText.text = "Brute-forcing " + num + "/" + totalNum;
+            progressText.text = num + "/" + totalNum + " bits cracked";
             float percent = Mathf.Clamp01(num / (float)totalNum);
             progressBar.localScale = new Vector3(percent, 1, 1);
 
