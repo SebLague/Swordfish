@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 61133932718149666}
   - component: {fileID: 61966766409982256}
   - component: {fileID: 61287002372379490}
-  - component: {fileID: 61267524832513316}
+  - component: {fileID: 61224971215542836}
   m_Layer: 0
   m_Name: valid areas
   m_TagString: Untagged
@@ -118,7 +118,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 2100000, guid: f604259164a7242dbadd12a497925660, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,7 +150,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.99289703, y: 0}
+  m_Offset: {x: -0.9936218, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -161,9 +161,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.8885956, y: 1}
+  m_Size: {x: 2.816536, y: 1}
   m_EdgeRadius: 0
---- !u!61 &61267524832513316
+--- !u!61 &61224971215542836
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -175,7 +175,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -4.0004025, y: 0}
+  m_Offset: {x: -3.942791, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -186,7 +186,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.8380241, y: 1}
+  m_Size: {x: 2.6804733, y: 1}
   m_EdgeRadius: 0
 --- !u!61 &61287002372379490
 BoxCollider2D:
@@ -247,7 +247,7 @@ TextMesh:
   m_GameObject: {fileID: 1143031000673574}
   m_Text: 
   m_OffsetZ: 0
-  m_CharacterSize: 0.085
+  m_CharacterSize: 0.072
   m_LineSpacing: 1
   m_Anchor: 3
   m_Alignment: 0
@@ -255,10 +255,10 @@ TextMesh:
   m_FontSize: 42
   m_FontStyle: 0
   m_RichText: 1
-  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Font: {fileID: 12800000, guid: f604259164a7242dbadd12a497925660, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 3730463322
+    rgba: 3462027866
 --- !u!114 &114634028574045000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -277,7 +277,12 @@ MonoBehaviour:
   spawnHeight: 3.2
   destroyHeight: -3.6
   textPrefab: {fileID: 102724380795516884}
-  speedMinMax: {x: 1, y: 0.3}
+  speedMinMax: {x: 0.22, y: 0.3}
   delayMinMax: {x: 4.5, y: 3.2}
   speedFac: 0.05
   minDelay: 2
+  wordCompleteAudio:
+  - {fileID: 8300000, guid: d3f5814dda0d743ff81c3be2adbf14f6, type: 3}
+  - {fileID: 8300000, guid: 3dd24e256b0c14a5bbd7bde2acd7e4d2, type: 3}
+  - {fileID: 8300000, guid: e4383c5d5ac814eae8a232ab66c88062, type: 3}
+  maxTimeBetweenSpawns: 5

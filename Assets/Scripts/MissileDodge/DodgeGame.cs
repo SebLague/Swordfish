@@ -15,7 +15,9 @@ public class DodgeGame : Task {
     Transform player;
     int curr;
     float delay;
-
+    public Transform defaultPlayerSpawn;
+    public GameObject playerPrefab;
+    float startTime;
 	public override void EnterEasyMode_Debug()
 	{
 		base.EnterEasyMode_Debug();
@@ -25,13 +27,21 @@ public class DodgeGame : Task {
 
 
 	void Start()
+
     {
+        startTime = Time.time;
         timeRemaining = duration;
+        if (FindObjectOfType<Dodger>() == null)
+        {
+            Instantiate(playerPrefab, defaultPlayerSpawn.position, Quaternion.identity, transform);
+        }
         player = FindObjectOfType<Dodger>().transform;
         delay = (duration - 10) / (float)(max);
     }
 
-	void Update () {
+	protected override void Update()
+	{
+		base.Update();
         if (!taskOver)
         {
             float percent = 1 - Mathf.Clamp01(timeRemaining / duration);
@@ -65,7 +75,10 @@ public class DodgeGame : Task {
                 missile.OnPlayerDeath += OnPlayerDeath;
             }
 
-            timeRemaining -= Time.deltaTime;
+            if (Time.time - startTime > 1)
+            {
+                timeRemaining -= Time.deltaTime;
+            }
             timeRemaining = Mathf.Clamp(timeRemaining, 0, duration);
             countdownUI.text = Mathf.RoundToInt(timeRemaining) + "";
 

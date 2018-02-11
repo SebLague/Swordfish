@@ -25,6 +25,8 @@ public class Stan : MonoBehaviour {
     public AudioClip[] taskFailAudio;
     public AudioClip[] taskWinAudio;
     public AudioClip keySlam;
+    public AudioClip chairRoll;
+    public AudioClip[] taskFailSfx;
 
     void Start()
     {
@@ -37,6 +39,7 @@ public class Stan : MonoBehaviour {
         }
         Utility.Shuffle(failIndices);
         failAnimIndexQueue = new Queue<int>(failIndices);
+        Sfx.Play(chairRoll);
     }
 
     // Update is called once per frame
@@ -149,5 +152,13 @@ public class Stan : MonoBehaviour {
 		voiceSource.clip = clip;
 		voiceSource.Play();
 		previousVoiceEndTime = Time.time + clip.length;
+    }
+
+    public void PlayTaskFailSfx(int i)
+    {
+        if (taskFailSfx != null && i < taskFailSfx.Length)
+        {
+            Sfx.Play(taskFailSfx[i]);
+        }
     }
 }

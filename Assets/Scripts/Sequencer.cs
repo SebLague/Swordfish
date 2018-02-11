@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class Sequencer : MonoBehaviour {
 
@@ -18,6 +19,11 @@ public class Sequencer : MonoBehaviour {
     public MeshRenderer monitor;
     public MeshRenderer screenOverlay;
     public CinemachineVirtualCamera menuCam;
+    public AudioClip restartAudio;
+    public AudioClip gameOverSirens;
+    public Image fadePlane;
+    bool readyForGameReload;
+    public AudioClip endBeepAudio;
 
     private void Start()
     {
@@ -25,6 +31,22 @@ public class Sequencer : MonoBehaviour {
         if (autoStart)
         {
             Begin();
+        }
+    }
+
+    private void Update()
+    {
+        if (readyForGameReload)
+        {
+            if (Input.anyKeyDown)
+            {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 
@@ -105,6 +127,7 @@ public class Sequencer : MonoBehaviour {
 
     IEnumerator RestartSequence(float delay)
     {
+        Sfx.Play(restartAudio);
         numRestarts++;
         FindObjectOfType<Stan>().OnTaskFail();
         yield return new WaitForSeconds(delay);
@@ -139,14 +162,60 @@ public class Sequencer : MonoBehaviour {
 
     public void GameWin()
     {
-        print("win");
+		//StartCoroutine(GameLoseSequence(true));
         FindObjectOfType<Stan>().OnWinGame();
     }
 
     public void GameLose()
     {
-		print("lose");
+        StartCoroutine(GameLoseSequence());
         FindObjectOfType<Stan>().OnLoseGame();
     }
+
+    IEnumerator GameLoseSequence()
+	{
+        Sfx.Play(gameOverSirens);
+        float endDuration = gameOverSirens.length;
+        float speed = (1 / .7f);
+        Color themeCol = Color.red;
+		yield return new WaitForSeconds(.2f);
+        float t = 0;
+        bool hasPlayedBeep = false;
+		while (t < endDuration)
+		{
+            if (t > 1 && !readyForGameReload)
+            {
+                readyForGameReload = true;
+                //FindObjectOfType<Stan>().SayWithText("press spacebar to play again",null);
+            }
+
+            float p = Mathf.Repeat(t * speed,1);
+            t += Time.deltaTime;
+			float brightnessPercent = Mathf.Clamp01(-(p * 2 - 1) * (p * 2 - 1) + 1);
+			//print(p+"  " + brightnessPercent);
+			monitor.material.SetColor("_EmissionColor", themeCol * brightnessPercent * 3);
+			//screenOverlayMat.color = new Color(1, 1, 1, p);
+			screenOverlay.material.color = new Color(1, 1, 1, brightnessPercent);
+
+            if (p > .3f && !hasPlayedBeep)
+            {
+                Sfx.Play(endBeepAudio);
+                hasPlayedBeep = true;
+            }
+            if (p < .3f)
+            {
+                hasPlayedBeep = false;
+            }
+
+            if (t + 3 > endDuration)
+            {
+                float fadePercent = Mathf.InverseLerp(endDuration-3, endDuration, t);
+                fadePlane.color = Color.Lerp(Color.clear, Color.black, fadePercent);
+            }
+
+            yield return null;
+		}
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+	}
   
 }

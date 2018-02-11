@@ -21,7 +21,9 @@ public class KeyMashing : Task {
 		progressBar.localScale = new Vector3(0, 1, 1);
     }
 
-    void Update () {
+	protected override void Update()
+	{
+		base.Update();
         if (!taskOver)
         {
             if (Input.anyKeyDown)

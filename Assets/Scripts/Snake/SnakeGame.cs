@@ -14,7 +14,7 @@ public class SnakeGame : Task {
     int numEaten;
     int numOnScreen;
     public TextMesh numRemText;
-
+    public Transform endPos;
 
 	public override void EnterEasyMode_Debug()
 	{
@@ -31,7 +31,7 @@ public class SnakeGame : Task {
 
     {
 		numLeftToSpawn = numToSpawn;
-		numRemText.text = numEaten + "/" + numToSpawn;
+        numRemText.text = numToSpawn+"";
         numRemText.gameObject.SetActive(true);
 
         screens = FindObjectOfType<ScreenAreas>().allScreens;
@@ -40,19 +40,24 @@ public class SnakeGame : Task {
 
     }
 
-    void Update()
-    {
-        numRemText.text = numEaten + "/" + numToSpawn;
+	protected override void Update()
+	{
+		base.Update();
+
+        numRemText.text = (numToSpawn-numEaten)+"";
         if (numOnScreen < maxNumOnScreen && Time.time > nextSpawnTime && numLeftToSpawn>0)
         {
-            numOnScreen++;
-            numLeftToSpawn--;
-            nextSpawnTime = Time.time + Random.Range(timeBetweenSpawns.x,timeBetweenSpawns.y);
-            GameObject snack = Instantiate(foodGOPrefab, RandomPoint(),Quaternion.identity);
-           
-            snack.transform.parent = transform;
-            snack.transform.localEulerAngles = Vector3.up * 180;
-            snack.GetComponent<Food>().OnDisappear += OnDisappear;
+            if (numLeftToSpawn > 1 || numOnScreen == 0) // dont spawn last until all gone
+            {
+                numOnScreen++;
+                numLeftToSpawn--;
+                nextSpawnTime = Time.time + Random.Range(timeBetweenSpawns.x, timeBetweenSpawns.y);
+                GameObject snack = Instantiate(foodGOPrefab, (numLeftToSpawn == 0) ? (Vector2)endPos.position : RandomPoint(), Quaternion.identity);
+
+                snack.transform.parent = transform;
+                snack.transform.localEulerAngles = Vector3.up * 180;
+                snack.GetComponent<Food>().OnDisappear += OnDisappear;
+            }
         }
     }
 
@@ -69,11 +74,16 @@ public class SnakeGame : Task {
         if (numEaten >= numToSpawn)
         {
             TaskCompleted();
+            FindObjectOfType<Snake>().Success();
         }
+       
     }
+
+  
 
     Vector2 RandomPoint()
     {
+      
         int mainScreenIndex = 4;
         int i = mainScreenIndex;
         if (Random.Range(0, 100) < 80)

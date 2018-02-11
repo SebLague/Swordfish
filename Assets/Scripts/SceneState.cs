@@ -15,6 +15,7 @@ public class SceneState : MonoBehaviour {
 
     public void SetMenuState()
     {
+        
         menuCam.Priority = 15;
         foreach (GameObject g in inactiveInMenu)
         {

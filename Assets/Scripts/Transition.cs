@@ -19,8 +19,9 @@ public class Transition : MonoBehaviour {
     float endTime;
     bool active;
     float startTime;
+    public float minWaitTime;
 
-    private void Start()
+    private void Awake()
     {
         if (autoStart)
         {
@@ -35,13 +36,18 @@ public class Transition : MonoBehaviour {
 		remainingEnableEvents = new List<EnableEvent>(enableEvents);
 		remainingDialogueEvents = new List<DialogueEvent>(dialogueEvents);
 
-        endTime = Mathf.Max(MaxEndTime(fadeEvents),MaxEndTime(enableEvents),MaxEndTime(dialogueEvents));
+        endTime = Mathf.Max(MaxEndTime(fadeEvents),MaxEndTime(enableEvents),MaxEndTime(dialogueEvents),minWaitTime);
         active = true;
 
 		if (winAnimationIndex != -1)
 		{
-			FindObjectOfType<Stan>().OnTaskSuccess(winAnimationIndex);
+            if (FindObjectOfType<Stan>())
+            {
+                FindObjectOfType<Stan>().OnTaskSuccess(winAnimationIndex);
+            }
 		}
+
+        Run();
     }
 
     float LocalTime
@@ -53,51 +59,56 @@ public class Transition : MonoBehaviour {
     }
 
     void Update () {
-        if (active)
-        {
-            
-            for (int i = remainingEnableEvents.Count - 1; i >= 0; i--)
-            {
-                if (LocalTime > remainingEnableEvents[i].time)
-                {
-                    foreach (GameObject g in remainingEnableEvents[i].obj)
-                    {
-                        g.SetActive(remainingEnableEvents[i].active);
-                    }
-                    remainingEnableEvents.RemoveAt(i);
-                }
-            }
 
-            for (int i = remainingFadeEvents.Count - 1; i >= 0; i--)
-            {
-                if (LocalTime > remainingFadeEvents[i].time)
-                {
-                    StartCoroutine(FadeSequence(remainingFadeEvents[i]));
-                    remainingFadeEvents.RemoveAt(i);
-                }
-            }
+        Run();
 
-            for (int i = remainingDialogueEvents.Count - 1; i >= 0; i--)
-            {
-                if (LocalTime > remainingDialogueEvents[i].time)
-                {
-                    StartCoroutine(DialogueSequence(remainingDialogueEvents[i]));
-                    remainingDialogueEvents.RemoveAt(i);
-                }
-            }
+    }
 
-            if (LocalTime > endTime)
-            {
-                active = false;
+    void Run()
+    {
+		if (active)
+		{
 
-                if (OnComplete != null)
-                {
-                    OnComplete();
-                }
-            }
-        }
+			for (int i = remainingEnableEvents.Count - 1; i >= 0; i--)
+			{
+				if (LocalTime > remainingEnableEvents[i].time)
+				{
+					foreach (GameObject g in remainingEnableEvents[i].obj)
+					{
+						g.SetActive(remainingEnableEvents[i].active);
+					}
+					remainingEnableEvents.RemoveAt(i);
+				}
+			}
 
+			for (int i = remainingFadeEvents.Count - 1; i >= 0; i--)
+			{
+				if (LocalTime > remainingFadeEvents[i].time)
+				{
+					StartCoroutine(FadeSequence(remainingFadeEvents[i]));
+					remainingFadeEvents.RemoveAt(i);
+				}
+			}
 
+			for (int i = remainingDialogueEvents.Count - 1; i >= 0; i--)
+			{
+				if (LocalTime > remainingDialogueEvents[i].time)
+				{
+					StartCoroutine(DialogueSequence(remainingDialogueEvents[i]));
+					remainingDialogueEvents.RemoveAt(i);
+				}
+			}
+
+			if (LocalTime > endTime)
+			{
+				active = false;
+
+				if (OnComplete != null)
+				{
+					OnComplete();
+				}
+			}
+		}
     }
 
     IEnumerator FadeSequence(FadeEvent e)

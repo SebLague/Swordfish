@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class Login : Task
 {
-
     public GameObject fish;
     public InputField loginField;
     public Text attemptsRemainingUI;
@@ -13,11 +12,15 @@ public class Login : Task
     public GameObject mainScreen;
     public GameObject denied;
     public GameObject granted;
+    public GameObject menu;
 
     string fullHintsTxt;
     bool showingMessage;
     bool loginNeedsFocus;
     int attemptsRemaining = 3;
+
+    public AudioClip acceptedAudio;
+    public AudioClip deniedAudio;
 
     string actualPassword = "swordfish";
 
@@ -28,6 +31,11 @@ public class Login : Task
         attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
         loginField.onEndEdit.AddListener(OnEndEdit);
         ShowLoginPage();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
     }
 
     void LateUpdate()
@@ -64,7 +72,7 @@ public class Login : Task
     {
         if (enteredPassword.Length > 0)
         {
-            if (actualPassword.ToLower() == enteredPassword.ToLower())
+            if (actualPassword.ToLower() == enteredPassword.ToLower().Replace(" ",""))
             {
                 OnCorrectPassword();
             }
@@ -77,6 +85,7 @@ public class Login : Task
 
     void OnCorrectPassword()
     {
+        Sfx.Play(acceptedAudio);
         StartCoroutine(Message(true, true));
         TaskCompleted();
         FindObjectOfType<Sequencer>().GameWin();
@@ -86,12 +95,14 @@ public class Login : Task
     {
         if (attemptsRemaining > 0)
         {
+           // Sfx.Play(deniedAudio);
             attemptsRemaining--;
             attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
 
             if (attemptsRemaining == 0)
             {
-                StartCoroutine(Message(false, true));
+                menu.SetActive(false);
+                //StartCoroutine(Message(false, true));
                 TaskFailed();
                 FindObjectOfType<Sequencer>().GameLose();
             }
@@ -107,7 +118,8 @@ public class Login : Task
     }
 
     IEnumerator ShowFish() {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(5);
+        fish.SetActive(true);
 
     }
     IEnumerator Message(bool accessGranted, bool loopForever)
@@ -121,6 +133,10 @@ public class Login : Task
             i--;
 			yield return new WaitForSeconds(.2f);
 			m.SetActive(true);
+            if (!accessGranted)
+            {
+                Sfx.Play(deniedAudio, Mathf.Lerp(.8f, .3f, 1 - i / 3f));
+            }
             yield return new WaitForSeconds(.5f);
             m.SetActive(false);
 			

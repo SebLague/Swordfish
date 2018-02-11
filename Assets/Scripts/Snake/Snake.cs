@@ -39,6 +39,11 @@ public class Snake : MonoBehaviour
     List<SnakeSegment> snake;
     ScreenAreas screen;
     float lastDirChangeTime;
+    public AudioClip[] eatSfx;
+    public AudioClip deathSfx;
+    bool success;
+
+    public GameObject missileTaskPlayer;
 
     struct MoveData
     {
@@ -66,6 +71,10 @@ public class Snake : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (success)
+        {
+            return;
+        }
         if (!dead)
         {
             wiggleTime += Time.deltaTime;
@@ -217,6 +226,41 @@ public class Snake : MonoBehaviour
         }
     }
 
+    public void Success()
+    {
+        StartCoroutine(SuccessAnimation());
+        success = true;
+    }
+
+	IEnumerator SuccessAnimation()
+	{
+        transform.parent = null;
+
+        Instantiate(missileTaskPlayer, snake[0].position, Quaternion.identity);
+        Destroy(snake[0].t.gameObject);
+        float duration = 2;
+        float p = 0;
+
+        Vector3[] startSizes = new Vector3[snake.Count - 1];
+        for (int i = 1; i < snake.Count; i++)
+        {
+            startSizes[i - 1] = snake[i].t.localScale;
+        }
+
+        while (p < 1)
+        {
+            p += Time.deltaTime / duration;
+            for (int i = 1; i < snake.Count; i++)
+            {
+                snake[i].t.localScale = Vector3.Lerp(startSizes[i-1], Vector3.zero, p);
+            }
+            yield return null;
+        }
+
+        Destroy(gameObject);
+
+    }
+
     void Eat(GameObject food) {
         if (!dead)
         {
@@ -224,6 +268,7 @@ public class Snake : MonoBehaviour
             {
                 OnEat();
             }
+            Sfx.Play(eatSfx[Random.Range(0, eatSfx.Length)], .75f);
             Destroy(food);
             //GrowSnake();
             for (int i = 0; i < numToGrowByPerFood; i++)
@@ -251,6 +296,7 @@ public class Snake : MonoBehaviour
             {
                 OnDeathEvent();
             }
+            Sfx.Play(deathSfx, .03f);
             dead = true;
             for (int i = 0; i < visIndex; i++)
             {

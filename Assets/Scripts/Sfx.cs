@@ -14,6 +14,25 @@ public class Sfx : MonoBehaviour {
 
     public static void Play(AudioClip clip, float vol = 1)
     {
-        instance.s.PlayOneShot(clip, vol);
+        if (clip != null)
+        {
+            instance.s.PlayOneShot(clip, vol);
+        }
+        else
+        {
+            Debug.Log("Null audio provided");
+        }
     }
+
+	public static void Play(AudioClip[] clip, float vol = 1)
+	{
+		if (clip != null)
+		{
+            instance.s.PlayOneShot(clip[Random.Range(0,clip.Length)], vol);
+		}
+		else
+		{
+			Debug.Log("Null audio provided");
+		}
+	}
 }

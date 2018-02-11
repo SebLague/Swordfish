@@ -11,6 +11,14 @@ public class Task : MonoBehaviour {
     protected bool inEasyMode_debug;
     protected int numRestarts;
 
+    protected virtual void Update()
+    {
+        if (Application.isEditor && Input.GetKeyDown(KeyCode.Equals))
+        {
+            TaskCompleted();
+        }
+    }
+
     public virtual void SetNumRestarts(int i)
     {
         numRestarts = i;
@@ -18,20 +26,26 @@ public class Task : MonoBehaviour {
 
     protected virtual void TaskCompleted()
     {
-        taskOver = true;
-        if (OnWin != null)
+        if (!taskOver)
         {
-            OnWin();
+            taskOver = true;
+            if (OnWin != null)
+            {
+                OnWin();
+            }
         }
     }
 
 	protected virtual void TaskFailed()
 	{
-        taskOver = true;
-		if (OnLose != null)
-		{
-			OnLose();
-		}
+        if (!taskOver)
+        {
+            taskOver = true;
+            if (OnLose != null)
+            {
+                OnLose();
+            }
+        }
 	}
 
     public virtual void EnterEasyMode_Debug()

@@ -105,6 +105,8 @@ ModelImporter:
     7400028: Fail_04
     7400030: Fail_05
     7400032: Win
+    7400034: Lose
+    7400036: Lose3
     9500000: //RootNode
     13700000: Character
   externalObjects:
@@ -204,7 +206,7 @@ ModelImporter:
       name: Victory01
       takeName: Victory01
       firstFrame: 0
-      lastFrame: 36
+      lastFrame: 47
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -399,7 +401,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.3248945
+        functionName: PlayTaskFailSfx
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0e36552cf0c124095b73504f6b7f428b,
+          type: 3}
+        floatParameter: 0
+        intParameter: 1
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -511,7 +521,15 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.22362868
+        functionName: PlayTaskFailSfx
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0e36552cf0c124095b73504f6b7f428b,
+          type: 3}
+        floatParameter: 0
+        intParameter: 2
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -521,6 +539,62 @@ ModelImporter:
       takeName: Win
       firstFrame: 0
       lastFrame: 151
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Lose
+      takeName: Lose
+      firstFrame: 0
+      lastFrame: 25
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Lose3
+      takeName: Lose3
+      firstFrame: 0
+      lastFrame: 124
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

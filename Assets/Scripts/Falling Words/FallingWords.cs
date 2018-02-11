@@ -14,7 +14,7 @@ public class FallingWords : Task {
    
     public TextMesh textPrefab;
     int wordIndex;
-    float nextSpawnTime;
+    float nextMinSpawnTime;
     BoxCollider2D[] topScreens;
     Bounds[] validBounds;
     public Vector2 speedMinMax;
@@ -39,6 +39,12 @@ public class FallingWords : Task {
     public float speedFac = .1f;
     public float minDelay = 1;
     float speed;
+    public AudioClip[] wordCompleteAudio;
+    List<Word> wordsToDelete;
+    public float maxTimeBetweenSpawns = 5;
+    float nextForcedSpawnTime;
+    int lastScreenIndex;
+    int widestScreenIndex;
 
 	// Use this for initialization
 	void Start () {
@@ -48,6 +54,7 @@ public class FallingWords : Task {
             stan.ResetTaskOneAudio();
         }
 
+        wordsToDelete = new List<Word>();
         inputString = "";
         activeWords = new List<Word>();
         potentialWordMatches = new List<Word>();
@@ -60,12 +67,23 @@ public class FallingWords : Task {
         }
         topScreens = FindObjectOfType<ScreenAreas>().topScreens;
         validBounds = validAreas.GetComponents<BoxCollider2D>().Select(v=>v.bounds).ToArray();
-	}
+        float widest = 0;
+        for (int i = 0; i < validBounds.Length; i++)
+        {
+            if (validBounds[i].size.x > widest)
+            {
+                widestScreenIndex = i;
+                widest = validBounds[i].size.x;
+            }
+        }
+        lastScreenIndex = widestScreenIndex;
+    }
 
 
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    protected override void Update () {
+        base.Update();
 		float completionPercent = wordIndex / ((float)words.Length - 1);
         float baseSpeed = Mathf.Lerp(speedMinMax.x, speedMinMax.y, completionPercent);
         float restartDifficultyPercent = Mathf.Clamp01((numRestarts - 1) / 4f);
@@ -90,12 +108,13 @@ public class FallingWords : Task {
 
         if (wordIndex < words.Length)
         {
-            if (wordIndex < words.Length - 2 || activeWords.Count == 0)
+            if (wordIndex < words.Length - 1)
             {
-                if (activeWords.Count < 3 && Time.time > nextSpawnTime)
+                if (activeWords.Count < 3 && Time.time > nextMinSpawnTime || Time.time > nextForcedSpawnTime)
                 {
-                    if (activeWords.Count == 0 || ((percentDoneWithFirstWord > .3f && !spawnedFirst) || (percentDoneWithFirstWord > .75f && !spawnedSecond)))
+                    if (activeWords.Count == 0 || Time.time > nextForcedSpawnTime || ((percentDoneWithFirstWord > .3f && !spawnedFirst) || (percentDoneWithFirstWord > .75f && !spawnedSecond)))
                     {
+                        nextForcedSpawnTime = Time.time + maxTimeBetweenSpawns;
                         if (percentDoneWithFirstWord > .3f)
                         {
                             spawnedFirst = true;
@@ -108,9 +127,12 @@ public class FallingWords : Task {
                         mesh.text = words[wordIndex];
                         PositionWord(mesh);
                         activeWords.Add(new Word(words[wordIndex], mesh));
-
+                        if (activeWords.Count == 1)
+                        {
+                            activeWords[0].UpdateColour(inputString);
+                        }
                         wordIndex++;
-                        nextSpawnTime = Time.time + minDelay;
+                        nextMinSpawnTime = Time.time + minDelay;
                        // nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
                         potentialWordMatches = new List<Word>(activeWords);
                     }
@@ -144,7 +166,19 @@ public class FallingWords : Task {
 			}
         }
 
-        if (activeWords.Count > 0)
+        for (int i = wordsToDelete.Count - 1; i >= 0; i--)
+        {
+
+            Word word = wordsToDelete[i];
+            word.mesh.transform.position += Vector3.down * Time.deltaTime * speed;
+            if (word.DeletionEffect())
+            {
+                wordsToDelete.RemoveAt(i);
+                Destroy(word.mesh.gameObject);
+            }
+        }
+
+			if (activeWords.Count > 0)
         {
             activeWords[0].mesh.color = Color.white;
             HandleInput();
@@ -163,19 +197,28 @@ public class FallingWords : Task {
 
         int randIndex = Random.Range(0, validBounds.Length);
         Bounds screen = new Bounds();
+        bool fits = false;
         for (int i = 0; i < validBounds.Length; i++)
         {
-            screen = validBounds[(randIndex+i)%validBounds.Length];
-            if (screen.size.x > width)
+
+            int index = (randIndex + i) % validBounds.Length;
+            Bounds potScreen = validBounds[index];
+            if (index != lastScreenIndex && potScreen.size.x > width)
             {
-                break;
-            }
+                screen = potScreen;
+                lastScreenIndex = index;
+                fits = true;
+				break;
+			}
+          
+        }
+        if (!fits)
+        {
+            screen = validBounds[widestScreenIndex];
+            lastScreenIndex = widestScreenIndex;
         }
 
-
-		Vector2 minMaxX = new Vector2(screen.min.x, screen.max.x);
-
-		float spawnX = Random.Range(minMaxX.x, minMaxX.y - width);
+		float spawnX = Random.Range(screen.min.x, screen.max.x - width);
 		mesh.transform.parent = transform;
 		mesh.transform.position = new Vector3(spawnX, spawnHeight);
 		mesh.transform.localEulerAngles = Vector3.up * 180;
@@ -184,14 +227,13 @@ public class FallingWords : Task {
 
     protected override void TaskCompleted()
     {
-        print("com");
+
         base.TaskCompleted();
         done = true;
     }
 
     protected override void TaskFailed()
     {
-        print("f");
         base.TaskFailed();
     }
 
@@ -206,6 +248,13 @@ public class FallingWords : Task {
         spawnedSecond = false;
         numWordsDone++;
         requestedVoice = false;
+        Sfx.Play(wordCompleteAudio, .2f);
+
+        inputString = "";
+        if (activeWords.Count > 0)
+        {
+            activeWords[0].UpdateColour("");
+        }
     }
 
     float TypeSpeed
@@ -223,13 +272,13 @@ public class FallingWords : Task {
     void HandleInput()
     {
         bool hasChanged = false;
-
+		Word word = activeWords[0];
         foreach (char c in Input.inputString.ToLower())
         {
             bool newInputStringValid = false;
             string newInputString = inputString + c;
 
-            Word word = activeWords[0];
+           
             if (word.word.StartsWith(newInputString,System.StringComparison.CurrentCulture))
             {
                 newInputStringValid = true;
@@ -254,19 +303,17 @@ public class FallingWords : Task {
 
         if (hasChanged)
         {
-			for (int i = activeWords.Count - 1; i >= 0; i--)
-			{
-				Word word = activeWords[i];
-                if (word.word == inputString)
-                {
-                    OnWordSucceeded(inputString);
-                    inputString = "";
-					activeWords.RemoveAt(i);
-					Destroy(word.mesh.gameObject);
-                }
-                word.UpdateColour(inputString);
-             
+			word.UpdateColour(inputString);
+            if (word.word == inputString)
+            {
+                inputString = "";
+                activeWords.RemoveAt(0);
+                word.Completed();
+                wordsToDelete.Add(word);
+                OnWordSucceeded(inputString);
+
             }
+        
         }
     }
 
@@ -276,7 +323,11 @@ public class FallingWords : Task {
         public string word;
         public TextMesh mesh;
 
-        const string highlightCol = "red";
+        const string highlightCol = "#b71b1b";
+        const string currLetterCol = "#e5811f";
+        int deletionIndex;
+        float nextDeleteTime;
+        string delString;
 
         public Word(string word, TextMesh mesh)
         {
@@ -284,10 +335,49 @@ public class FallingWords : Task {
             this.mesh = mesh;
         }
 
+        public void Completed()
+        {
+            mesh.transform.position = mesh.GetComponent<MeshRenderer>().bounds.center;
+            mesh.anchor = TextAnchor.MiddleCenter;
+            deletionIndex = word.Length;
+            mesh.text = word;
+            mesh.color = new Color(1, 1, 1, .2f);
+            delString = word;
+
+        }
+
+        public bool DeletionEffect()
+        {
+            if (Time.time > nextDeleteTime)
+            {
+
+                nextDeleteTime = Time.time + .012f;
+                delString = delString.Substring(1, delString.Length - 2);
+                /*
+                string bin = "";
+                foreach (char c in delString)
+                {
+                    if (c == ' ')
+                    {
+                        bin += " ";
+                    }
+                    else
+                    {
+                        bin += Random.Range(0, 2);
+                    }
+                }
+                */
+                mesh.text = delString;
+            }
+            return delString.Length <= 2;
+        }
+
         public void UpdateColour(string inputString)
         {
-           
-            if (word.StartsWith(inputString, System.StringComparison.CurrentCulture)) {
+            int colFormatLength = 0;
+            if (word.StartsWith(inputString, System.StringComparison.CurrentCulture) && inputString != "") {
+                string colFormat = "<color=" + highlightCol + ">" + "</color>";
+                colFormatLength = colFormat.Length;
                 mesh.text = "<color=" + highlightCol + ">" + inputString + "</color>";
 
                 if (word != inputString)
@@ -300,6 +390,17 @@ public class FallingWords : Task {
                 mesh.text = word;
             }
 
+            if (inputString.Length < word.Length)
+            {
+                if (word[inputString.Length] == ' ')
+                {
+                    mesh.text=mesh.text.Remove(inputString.Length+colFormatLength,1);
+                    mesh.text=mesh.text.Insert(inputString.Length + colFormatLength, "_");
+                }
+                string currCharColStr = "<color=" + currLetterCol + ">";
+                mesh.text = mesh.text.Insert(inputString.Length+colFormatLength, currCharColStr);
+                mesh.text = mesh.text.Insert(inputString.Length + colFormatLength + currCharColStr.Length +1, "</color>");
+            }
         }
     }
 }
