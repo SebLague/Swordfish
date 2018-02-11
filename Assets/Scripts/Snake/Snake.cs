@@ -29,15 +29,17 @@ public class Snake : MonoBehaviour
     List<Transform> growingParts;
     bool dead;
     static List<MoveData> headPoints;
+    List<DirInfo> dirInfo;
 
     Vector2 initialDirection = Vector2.up;
     Vector2 dirOld;
-
+    Vector2 iOld;
     public float smoothMoveTime = .1f;
     Vector2 velocity;
     Vector2 smoothVelocityRef;
     List<SnakeSegment> snake;
     ScreenAreas screen;
+    float lastDirChangeTime;
 
     struct MoveData
     {
@@ -53,11 +55,13 @@ public class Snake : MonoBehaviour
 
     void Start()
     {
+        dirInfo = new List<DirInfo>();
         headPoints = new List<MoveData>(1024);
         maxLength = numToGrowByPerFood * 64 + startSnakeSize + 10;
         screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
         growingParts = new List<Transform>();
+        iOld = initialDirection;
     }
 
     // Update is called once per frame
@@ -66,35 +70,55 @@ public class Snake : MonoBehaviour
         if (!dead)
         {
             wiggleTime += Time.deltaTime;
+            Vector2 dir = Vector2.zero;
+            Vector2 axis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-            Vector2 dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (dir == Vector2.zero || dir == -dirOld)
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
-                dir = dirOld;
+                dir = Vector2.up;
             }
-            else
-            {
-                if (dir.sqrMagnitude > 1) // holding multiple keys; so pick only latest one
+            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+			{
+                dir = Vector2.left;
+			}
+            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+			{
+                dir = Vector2.down;
+			}
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+			{
+                dir = Vector2.right;
+			}
+            if (dir == Vector2.zero)
+			{
+                if (axis.sqrMagnitude == 1)
                 {
-                    if (dir.x != dirOld.x)
-                    {
-                        dir = Vector2.right * dir.x;
-                    }
-                    else if (dir.y != dirOld.y)
-                    {
-                        dir = Vector2.up * dir.y;
-                    }
-                    else
-                    {
-                        dir = dirOld;
-                    }
+                    dir = axis;
                 }
                 else
                 {
-                    dirOld = dir;
+                    dir = iOld;
+                }
+			}
 
+            if (dir == -iOld)
+            {
+                dir = iOld;
+            }
+
+            if (dir != iOld)
+            {
+                if (Time.time - lastDirChangeTime > .075f)
+                {
+                    lastDirChangeTime = Time.time;
+                    iOld = dir;
+                }
+                else
+                {
+                    dir = iOld;
                 }
             }
+
 
             float wiggleAmount = Mathf.Sin(wiggleTime * wiggleSpeed) * wiggleDst;
             float deltaWiggle = wiggleAmount - wiggleAmountOld;
@@ -375,6 +399,17 @@ public class Snake : MonoBehaviour
         }
       
 
+    }
+
+    public struct DirInfo
+    {
+        public Vector2 dir;
+        public float time;
+        public DirInfo(Vector2 dir, float time)
+        {
+            this.dir = dir;
+            this.time = time;
+        }
     }
 
 }
