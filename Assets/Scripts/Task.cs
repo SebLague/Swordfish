@@ -9,6 +9,12 @@ public class Task : MonoBehaviour {
     public float restartDelay = .1f;
     protected bool taskOver;
     protected bool inEasyMode_debug;
+    protected int numRestarts;
+
+    public virtual void SetNumRestarts(int i)
+    {
+        numRestarts = i;
+    }
 
     protected virtual void TaskCompleted()
     {

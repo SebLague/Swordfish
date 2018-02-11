@@ -1,4 +1,4 @@
 launch hydra.exe, overclock cpu, accelerate gpu, download extra ram, initiate supercooling,
-compute ip address, open dark web, ping server, exploit network protocol, redirect traffic,
-sniff data packets, overflow buffer, trace root kernel, reverse engineer data, escalate privileges,
+compute ip address, open dark web, ping server, exploit network protocol,
+sniff data packets, overflow buffer, trace root kernel, reverse engineer data,
 log virtual identifier, awaken the hydra, release the hydra

@@ -245,15 +245,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosion: {fileID: 1181577652728322, guid: 499bfc98e27454122b8308ae3399d676, type: 2}
   speed: 2.8
-  slerpSpeed: 3
-  detractionForce: 2.5
-  detractionRadius: 2
+  slerpSpeed: 2.8
+  detractionForce: 2.6
+  detractionRadius: 2.8
   targetNoise: 0
   retargetTime: 1
   retargetThresholdDst: 2
   timeBetweenRetargets: 2
   circleTimeBeforeRetarget: 0.75
-  timeBetweenTargetUpdates: 0.3
+  timeBetweenTargetUpdates: 0.5
   noiseFac: 0.3
   missileMask:
     serializedVersion: 2

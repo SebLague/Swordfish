@@ -636,9 +636,9 @@ MonoBehaviour:
   - {fileID: 4086932368467506}
   - {fileID: 4075975270754642}
   - {fileID: 4184374834778488}
-  duration: 64
+  duration: 32
   countdownUI: {fileID: 102286907269755162}
-  max: 7
+  max: 6
 --- !u!114 &114587192777739248
 MonoBehaviour:
   m_ObjectHideFlags: 1

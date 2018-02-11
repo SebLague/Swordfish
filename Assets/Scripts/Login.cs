@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Login : Task {
+public class Login : Task
+{
 
+    public GameObject fish;
     public InputField loginField;
     public Text attemptsRemainingUI;
     public Text hintsUI;
     public GameObject mainScreen;
     public GameObject denied;
-	public GameObject granted;
+    public GameObject granted;
 
     string fullHintsTxt;
     bool showingMessage;
@@ -18,31 +20,33 @@ public class Login : Task {
     int attemptsRemaining = 3;
 
     string actualPassword = "swordfish";
-	
-	void Start () {
+
+    void Start()
+    {
         fullHintsTxt = hintsUI.text;
         hintsUI.text = fullHintsTxt.Split('\n')[0];
         attemptsRemainingUI.text = "Attempts remaining: " + attemptsRemaining;
         loginField.onEndEdit.AddListener(OnEndEdit);
         ShowLoginPage();
-	}
-	
-	void LateUpdate () {
+    }
+
+    void LateUpdate()
+    {
         if (!taskOver)
         {
             if (loginNeedsFocus)
             {
-                loginNeedsFocus = false;
+                //loginNeedsFocus = false;
                 loginField.Select();
                 loginField.ActivateInputField();
-                loginField.ForceLabelUpdate();
+                //loginField.ForceLabelUpdate();
             }
         }
-	}
+    }
 
     void ShowLoginPage()
     {
-		loginField.Select();
+        loginField.Select();
 
     }
 
@@ -93,11 +97,19 @@ public class Login : Task {
             }
             else
             {
+                if (attemptsRemaining == 1)
+                {
+                    StartCoroutine(ShowFish());
+                }
                 StartCoroutine(Message(false, false));
             }
         }
     }
 
+    IEnumerator ShowFish() {
+        yield return new WaitForSeconds(2);
+
+    }
     IEnumerator Message(bool accessGranted, bool loopForever)
     {
         showingMessage = true;

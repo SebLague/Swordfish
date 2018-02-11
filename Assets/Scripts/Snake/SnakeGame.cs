@@ -15,6 +15,7 @@ public class SnakeGame : Task {
     int numOnScreen;
     public TextMesh numRemText;
 
+
 	public override void EnterEasyMode_Debug()
 	{
 		base.EnterEasyMode_Debug();
@@ -51,10 +52,15 @@ public class SnakeGame : Task {
            
             snack.transform.parent = transform;
             snack.transform.localEulerAngles = Vector3.up * 180;
+            snack.GetComponent<Food>().OnDisappear += OnDisappear;
         }
     }
 
-
+    void OnDisappear()
+    {
+        numOnScreen--;
+        numLeftToSpawn++;
+    }
     void OnEat()
     {
         numOnScreen--;

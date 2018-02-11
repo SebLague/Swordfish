@@ -13,6 +13,7 @@ public class Sequencer : MonoBehaviour {
     public int taskIndex;
     Task currentTask;
     public Transition[] taskTransitions;
+    int numRestarts;
 
     public MeshRenderer monitor;
     public MeshRenderer screenOverlay;
@@ -79,6 +80,7 @@ public class Sequencer : MonoBehaviour {
             currentTask.transform.localPosition = Vector3.zero;
             currentTask.transform.localRotation = Quaternion.identity;
             currentTask.gameObject.SetActive(true);
+            currentTask.SetNumRestarts(numRestarts);
             currentTask.OnLose += Restart;
             currentTask.OnWin += TransitionToNextTask;
 
@@ -91,6 +93,7 @@ public class Sequencer : MonoBehaviour {
 	
     void TransitionToNextTask()
     {
+        numRestarts = 0;
         taskIndex++;
         StartTransition();
     }
@@ -102,6 +105,7 @@ public class Sequencer : MonoBehaviour {
 
     IEnumerator RestartSequence(float delay)
     {
+        numRestarts++;
         FindObjectOfType<Stan>().OnTaskFail();
         yield return new WaitForSeconds(delay);
         float p = 0;

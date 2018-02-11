@@ -18,6 +18,7 @@ public class FallingWords : Task {
     BoxCollider2D[] topScreens;
     Bounds[] validBounds;
     public Vector2 speedMinMax;
+
     public Vector2 delayMinMax;
     bool done;
     List<Word> activeWords;
@@ -30,10 +31,22 @@ public class FallingWords : Task {
     bool requestedVoice;
     Stan stan;
 
+    bool recordingWordTime;
+    int numLettersTyped;
+    float wordStartTime;
+    float totalTypeTime;
+    float startTypeSpeed = 3;
+    public float speedFac = .1f;
+    public float minDelay = 1;
+    float speed;
+
 	// Use this for initialization
 	void Start () {
         stan = FindObjectOfType<Stan>();
-        stan.ResetTaskOneAudio();
+        if (stan != null)
+        {
+            stan.ResetTaskOneAudio();
+        }
 
         inputString = "";
         activeWords = new List<Word>();
@@ -48,11 +61,17 @@ public class FallingWords : Task {
         topScreens = FindObjectOfType<ScreenAreas>().topScreens;
         validBounds = validAreas.GetComponents<BoxCollider2D>().Select(v=>v.bounds).ToArray();
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () {
 		float completionPercent = wordIndex / ((float)words.Length - 1);
-        float speed = Mathf.Lerp(speedMinMax.x, speedMinMax.y, completionPercent);
+        float baseSpeed = Mathf.Lerp(speedMinMax.x, speedMinMax.y, completionPercent);
+        float restartDifficultyPercent = Mathf.Clamp01((numRestarts - 1) / 4f);
+        float skillBasedSpeedFac = Mathf.Lerp(speedFac, 0, restartDifficultyPercent);
+        float targetSpeed = baseSpeed + TypeSpeed * skillBasedSpeedFac;
+        speed = Mathf.Lerp(speed, targetSpeed, Time.deltaTime);
 
         float percentDoneWithFirstWord = 0;
         if (activeWords.Count > 0)
@@ -62,7 +81,10 @@ public class FallingWords : Task {
 
         if (percentDoneWithFirstWord > .3f && !requestedVoice)
         {
-			stan.PlayNextTaskOneAudio();
+            if (stan != null)
+            {
+                stan.PlayNextTaskOneAudio();
+            }
             requestedVoice = true;
         }
 
@@ -70,7 +92,7 @@ public class FallingWords : Task {
         {
             if (wordIndex < words.Length - 2 || activeWords.Count == 0)
             {
-                if (activeWords.Count < 3)
+                if (activeWords.Count < 3 && Time.time > nextSpawnTime)
                 {
                     if (activeWords.Count == 0 || ((percentDoneWithFirstWord > .3f && !spawnedFirst) || (percentDoneWithFirstWord > .75f && !spawnedSecond)))
                     {
@@ -88,7 +110,8 @@ public class FallingWords : Task {
                         activeWords.Add(new Word(words[wordIndex], mesh));
 
                         wordIndex++;
-                        nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
+                        nextSpawnTime = Time.time + minDelay;
+                       // nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
                         potentialWordMatches = new List<Word>(activeWords);
                     }
                 }
@@ -161,21 +184,40 @@ public class FallingWords : Task {
 
     protected override void TaskCompleted()
     {
+        print("com");
         base.TaskCompleted();
         done = true;
     }
 
     protected override void TaskFailed()
     {
+        print("f");
         base.TaskFailed();
     }
 
-    void OnWordSucceeded()
+    void OnWordSucceeded(string w)
     {
+        numLettersTyped += w.Length;
+        totalTypeTime += (Time.time - wordStartTime);
+        recordingWordTime = false;
+       // print(TypeSpeed);
+
         spawnedFirst = false;
         spawnedSecond = false;
         numWordsDone++;
         requestedVoice = false;
+    }
+
+    float TypeSpeed
+    {
+        get
+        {
+            if (totalTypeTime > 0)
+            {
+                return numLettersTyped / totalTypeTime;
+            }
+            return startTypeSpeed;
+        }
     }
 
     void HandleInput()
@@ -197,6 +239,11 @@ public class FallingWords : Task {
 
             if (newInputStringValid)
             {
+                if (!recordingWordTime)
+                {
+                    recordingWordTime = true;
+                    wordStartTime = Time.time;
+                }
                 inputString = newInputString;
             }
             else
@@ -212,7 +259,7 @@ public class FallingWords : Task {
 				Word word = activeWords[i];
                 if (word.word == inputString)
                 {
-                    OnWordSucceeded();
+                    OnWordSucceeded(inputString);
                     inputString = "";
 					activeWords.RemoveAt(i);
 					Destroy(word.mesh.gameObject);
