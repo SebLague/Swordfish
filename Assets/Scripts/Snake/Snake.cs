@@ -28,8 +28,7 @@ public class Snake : MonoBehaviour
     int visIndex;
     List<Transform> growingParts;
     bool dead;
-    static List<MoveData> headPoints;
-    List<DirInfo> dirInfo;
+    static LinkedList<MoveData> headPoints;
 
     Vector2 initialDirection = Vector2.up;
     Vector2 dirOld;
@@ -55,8 +54,8 @@ public class Snake : MonoBehaviour
 
     void Start()
     {
-        dirInfo = new List<DirInfo>();
-        headPoints = new List<MoveData>(1024);
+        headPoints = new LinkedList<MoveData>();
+
         maxLength = numToGrowByPerFood * 64 + startSnakeSize + 10;
         screen = FindObjectOfType<ScreenAreas>();
         CreateSnake(startSnakeSize);
@@ -268,12 +267,13 @@ public class Snake : MonoBehaviour
         dirOld = initialDirection;
 
         snake = new List<SnakeSegment>();
-        snake.Add(CreateBodyPart(startPos.position, null));
-        snake.Add(CreateBodyPart((Vector2)startPos.position - initialDirection * spacing, snake[0]));
+        snake.Add(CreateBodyPart(startPos.position, null, false));
+        snake.Add(CreateBodyPart((Vector2)startPos.position - initialDirection * spacing, snake[0], false));
 
         for (int i = 0; i < maxLength - 2; i++)
         {
-            GrowSnake();
+            bool last = i == maxLength - 3;
+            GrowSnake(last);
             if (i+2 > initialSize)
             {
                 snake[i + 2].SetVisible(false);
@@ -282,7 +282,7 @@ public class Snake : MonoBehaviour
         visIndex = initialSize;
     }
 
-    SnakeSegment CreateBodyPart(Vector2 position, SnakeSegment parent)
+    SnakeSegment CreateBodyPart(Vector2 position, SnakeSegment parent, bool isTail)
     {
 
         GameObject g = Instantiate(bodyPrefab);
@@ -291,7 +291,7 @@ public class Snake : MonoBehaviour
         g.transform.parent = transform;
         g.transform.localEulerAngles = Vector3.right * 90;
 
-        SnakeSegment p = new SnakeSegment(parent, position, g.transform);
+        SnakeSegment p = new SnakeSegment(parent, position, g.transform,isTail);
         if (snake.Count > 1)
         {
             CircleCollider2D c = g.GetComponent<CircleCollider2D>();
@@ -307,7 +307,7 @@ public class Snake : MonoBehaviour
         return p;
     }
 
-    void GrowSnake()
+    void GrowSnake(bool isTail)
     {
 
         SnakeSegment tail = snake[snake.Count - 1];
@@ -315,7 +315,7 @@ public class Snake : MonoBehaviour
 
         Vector2 position = tail.position - forwardDir * spacing;
 
-        snake.Add(CreateBodyPart(position,tail));
+        snake.Add(CreateBodyPart(position,tail,isTail));
     }
 
 
@@ -323,22 +323,25 @@ public class Snake : MonoBehaviour
     {
         public Vector2 position;
         public Vector2 target;
-
-        SnakeSegment parentSegment;
         public Transform t;
-        int hI;
+        LinkedListNode<MoveData> currNode;
+        bool isTail;
 
-        public SnakeSegment(SnakeSegment parentSegment, Vector2 position, Transform t)
+        public SnakeSegment(SnakeSegment parentSegment, Vector2 position, Transform t, bool isTail)
         {
-            this.parentSegment = parentSegment;
             this.t = t;
+            this.isTail = isTail;
             t.position = position;
             this.position = position;
 
             if (parentSegment != null)
             {
                 target = parentSegment.position;
-                hI = parentSegment.hI;
+                currNode = parentSegment.currNode;
+            }
+            else
+            {
+                currNode = headPoints.AddFirst(new MoveData(position, false));
             }
         }
 
@@ -347,69 +350,63 @@ public class Snake : MonoBehaviour
         {
             position += moveAmount;
             t.position = position;
-            headPoints.Add(new MoveData(position,teleport));
+            headPoints.AddLast(new MoveData(position, teleport));
         }
 
 
         public void Follow(float moveDst)
         {
-			float moveDstRemaining = moveDst;
-      
+            float moveDstRemaining = moveDst;
 
-			while (moveDstRemaining > 0)
-			{
-                
-				float dstToTarget = Vector2.Distance(position, target);
+            while (moveDstRemaining > 0)
+            {
 
-				if (dstToTarget <= moveDstRemaining)
-				{
-					position = target;
-					//pastPositions.Enqueue(position);
-					moveDstRemaining -= dstToTarget;
+                float dstToTarget = Vector2.Distance(position, target);
 
-                    //target = parentSegment.pastPositions.Dequeue();
-                    MoveData md = headPoints[hI];
+                if (dstToTarget <= moveDstRemaining)
+                {
+                    position = target;
+                    moveDstRemaining -= dstToTarget;
+
+                    currNode = currNode.Next;
+                    MoveData md = currNode.Value;
+
                     target = md.pos;
                     if (md.teleport)
                     {
                         position = target;
                     }
-                    hI++;
 
-				}
-				else
-				{
-					Vector2 newPos = position + (target - position).normalized * moveDstRemaining;
+                    if (isTail)
+                    {
+                        headPoints.RemoveFirst();
 
-					position = newPos;
-					//pastPositions.Enqueue(position);
-					moveDstRemaining = 0;
-				}
+                    }
 
-			}
+                }
+                else
+                {
+                    Vector2 newPos = position + (target - position).normalized * moveDstRemaining;
 
-			t.position = position;
-           
+                    position = newPos;
+                    moveDstRemaining = 0;
+                }
+
+            }
+
+            t.position = position;
+
+
+
         }
 
         public void SetVisible(bool v)
         {
-         
+
             t.gameObject.SetActive(v);
         }
-      
 
-    }
 
-    public struct DirInfo
-    {
-        public Vector2 dir;
-        public float time;
-        public DirInfo(Vector2 dir, float time)
-        {
-            this.dir = dir;
-            this.time = time;
-        }
     }
 
 }

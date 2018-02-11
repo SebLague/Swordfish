@@ -6,7 +6,7 @@ using Cinemachine;
 public class Sequencer : MonoBehaviour {
 
     public bool autoStart;
-    public bool easyMode;
+    public bool[] easyMode;
 
     public Transform screenParent;
     public Task[] tasks;
@@ -82,7 +82,7 @@ public class Sequencer : MonoBehaviour {
             currentTask.OnLose += Restart;
             currentTask.OnWin += TransitionToNextTask;
 
-            if (easyMode)
+            if (easyMode[taskIndex])
             {
                 currentTask.EnterEasyMode_Debug();
             }
