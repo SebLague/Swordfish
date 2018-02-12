@@ -46,7 +46,7 @@ public class Sequencer : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && taskIndex != 3)// ignore esc key on button mash task as may be pressed accidentally
         {
             Application.Quit();
         }

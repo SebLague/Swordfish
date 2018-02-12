@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Muter : MonoBehaviour {
-    AudioListener listener;
+    //AudioListener listener;
 
     string target = "mute";
     string input;
-	
+    bool mute;
+
+    AudioSource[] s;
+    float[] vols;
 	void Start () {
-        listener = FindObjectOfType<AudioListener>();
+        s = FindObjectsOfType<AudioSource>();
+        vols = s.Select(x => x.volume).ToArray();
+       // listener = FindObjectOfType<AudioListener>();
 	}
 	
 	// Update is called once per frame
@@ -45,6 +51,20 @@ public class Muter : MonoBehaviour {
 
     void ToggleMute()
     {
-        listener.enabled = !listener.enabled;
+        mute = !mute;
+        if (mute)
+        {
+            foreach (AudioSource source in s)
+            {
+                source.volume = 0;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                s[i].volume = vols[i];
+            }
+        }
     }
 }
