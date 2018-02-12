@@ -121,7 +121,7 @@ public class Login : Task
     }
 
     IEnumerator ShowFish() {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3.5f);
         fish.SetActive(true);
 
     }

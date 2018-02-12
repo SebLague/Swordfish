@@ -116,7 +116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1599369346786792
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,22 +187,6 @@ GameObject:
   - component: {fileID: 4361052117840642}
   m_Layer: 0
   m_Name: GameObject (14)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1753828796974548
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4372479601051666}
-  - component: {fileID: 68201381148836364}
-  m_Layer: 0
-  m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,7 +277,6 @@ Transform:
   - {fileID: 4836057396967102}
   - {fileID: 4674665061125996}
   - {fileID: 4719175900927480}
-  - {fileID: 4372479601051666}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -374,19 +357,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4719175900927480}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4372479601051666
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1753828796974548}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4105210042277766}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4674665061125996
 Transform:
@@ -484,33 +454,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!68 &68201381148836364
-EdgeCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1753828796974548}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0.03
-  m_Points:
-  - {x: 7.7948933, y: -3.3288045}
-  - {x: -7.8410835, y: -3.2921839}
-  - {x: -7.7924347, y: 2.5247612}
-  - {x: -3.6647644, y: 2.5182693}
-  - {x: -3.403286, y: 2.5275755}
-  - {x: -3.3936844, y: 2.7141836}
-  - {x: 3.6301117, y: 2.7191358}
-  - {x: 3.6366386, y: 2.6118186}
-  - {x: 7.7357254, y: 2.584889}
-  - {x: 7.806801, y: -0.13990363}
-  - {x: 7.7563877, y: -0.42630392}
-  - {x: 7.7977333, y: -3.319703}
 --- !u!102 &102286907269755162
 TextMesh:
   serializedVersion: 3
