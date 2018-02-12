@@ -26,7 +26,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1143031000673574
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,7 +98,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1143031000673574}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 7.8, y: 1.14, z: 0.13}
+  m_LocalPosition: {x: 5.3699994, y: 3.7899997, z: 0.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4080204062910146}
@@ -150,7 +150,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.9936218, y: 0}
+  m_Offset: {x: -0.9936218, y: -0.1944027}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -161,7 +161,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.816536, y: 1}
+  m_Size: {x: 2.816536, y: 0.6111946}
   m_EdgeRadius: 0
 --- !u!61 &61224971215542836
 BoxCollider2D:
@@ -175,7 +175,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -3.942791, y: 0}
+  m_Offset: {x: -3.942791, y: -0.21757889}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -186,7 +186,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.6804733, y: 1}
+  m_Size: {x: 2.6804733, y: 0.5648422}
   m_EdgeRadius: 0
 --- !u!61 &61287002372379490
 BoxCollider2D:
@@ -200,7 +200,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -8.122013, y: 0}
+  m_Offset: {x: -8.122013, y: -0.5171745}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -211,7 +211,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.0855713, y: 1}
+  m_Size: {x: 4.0855713, y: 0.58778}
   m_EdgeRadius: 0
 --- !u!61 &61966766409982256
 BoxCollider2D:
@@ -225,7 +225,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 3.4004774, y: 0}
+  m_Offset: {x: 3.4004774, y: -0.3652457}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -236,7 +236,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.751833, y: 1}
+  m_Size: {x: 3.751833, y: 0.60400414}
   m_EdgeRadius: 0
 --- !u!102 &102724380795516884
 TextMesh:
@@ -245,7 +245,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1143031000673574}
-  m_Text: 
+  m_Text: tttt
   m_OffsetZ: 0
   m_CharacterSize: 0.072
   m_LineSpacing: 1
@@ -258,7 +258,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: f604259164a7242dbadd12a497925660, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 3462027866
+    rgba: 2824493658
 --- !u!114 &114634028574045000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -277,12 +277,72 @@ MonoBehaviour:
   spawnHeight: 3.2
   destroyHeight: -3.6
   textPrefab: {fileID: 102724380795516884}
-  speedMinMax: {x: 0.22, y: 0.3}
+  speedMinMax: {x: 0.2, y: 0.25}
   delayMinMax: {x: 4.5, y: 3.2}
   speedFac: 0.05
-  minDelay: 2
+  minDelay: 1
   wordCompleteAudio:
   - {fileID: 8300000, guid: d3f5814dda0d743ff81c3be2adbf14f6, type: 3}
   - {fileID: 8300000, guid: 3dd24e256b0c14a5bbd7bde2acd7e4d2, type: 3}
   - {fileID: 8300000, guid: e4383c5d5ac814eae8a232ab66c88062, type: 3}
-  maxTimeBetweenSpawns: 5
+  maxTimeBetweenSpawns: 8
+  skillCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.09117508
+      value: 0.18804932
+      inSlope: 0.26610136
+      outSlope: 0.26610136
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 2.9955788
+      value: 1.0094388
+      inSlope: 1.104335
+      outSlope: 1.104335
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 4.005569
+      value: 9.02541
+      inSlope: 7.6081905
+      outSlope: 7.6081905
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 5.0354247
+      value: 17.07324
+      inSlope: 10.271657
+      outSlope: 10.271657
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 5.953957
+      value: 25.104395
+      inSlope: 7.2186823
+      outSlope: 7.2186823
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 7.007104
+      value: 29.997913
+      inSlope: 4.2585864
+      outSlope: 4.2585864
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 8.112925
+      value: 36.016006
+      inSlope: 5.2532787
+      outSlope: 5.2532787
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 15.226175
+      value: 56.04092
+      inSlope: 1.6038918
+      outSlope: 1.6038918
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  overideTypeSpeed_debug: 0
+  forcedTypeSpeed_debug: 4
+  actualTypeSpeed_readonly: 0
+  scrollSpeed_readonly: 0
+  autoType_debug: 0
+  skillExtra: 0.09
