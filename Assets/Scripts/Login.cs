@@ -13,6 +13,7 @@ public class Login : Task
     public GameObject denied;
     public GameObject granted;
     public GameObject menu;
+    public GameObject successObject;
 
     string fullHintsTxt;
     bool showingMessage;
@@ -89,6 +90,7 @@ public class Login : Task
         StartCoroutine(Message(true, true));
         TaskCompleted();
         FindObjectOfType<Sequencer>().GameWin();
+        StartCoroutine(ShowWin());
     }
 
     void OnIncorrectPassword()
@@ -121,6 +123,13 @@ public class Login : Task
         yield return new WaitForSeconds(5);
         fish.SetActive(true);
 
+    }
+
+    IEnumerator ShowWin()
+    {
+        yield return new WaitForSeconds(.5f);
+        successObject.SetActive(true);
+        fish.SetActive(true);
     }
     IEnumerator Message(bool accessGranted, bool loopForever)
     {

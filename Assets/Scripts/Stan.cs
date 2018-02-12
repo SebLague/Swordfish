@@ -27,6 +27,8 @@ public class Stan : MonoBehaviour {
     public AudioClip keySlam;
     public AudioClip chairRoll;
     public AudioClip[] taskFailSfx;
+    public GameObject glass;
+    public GameObject handBone;
 
     void Start()
     {
@@ -40,6 +42,27 @@ public class Stan : MonoBehaviour {
         Utility.Shuffle(failIndices);
         failAnimIndexQueue = new Queue<int>(failIndices);
         Sfx.Play(chairRoll);
+    }
+
+    public void GrabGlass()
+    {
+        //Debug.Break();
+        glass.transform.parent = handBone.transform;
+        StartCoroutine(LerpGlass());
+    }
+
+    IEnumerator LerpGlass()
+    {
+        Vector3 locPos = glass.transform.localPosition;
+        Quaternion locRot = glass.transform.localRotation;
+        float p = 0;
+        while (p < 1)
+        {
+            p += Time.deltaTime / .2f;
+			glass.transform.localPosition = Vector3.Lerp(locPos, Vector3.zero, p);
+            glass.transform.localRotation = Quaternion.Slerp(locRot, Quaternion.identity, p);
+            yield return null;
+        }
     }
 
     // Update is called once per frame
@@ -100,6 +123,13 @@ public class Stan : MonoBehaviour {
     public void OnWinGame()
     {
         anim.SetTrigger("Win Game");
+        //StartCoroutine(PlayWinAnim());
+    }
+
+    IEnumerator PlayWinAnim()
+    {
+        yield return new WaitForSeconds(.5f);
+		anim.SetTrigger("Win Game");
     }
 
 	public void OnLoseGame()

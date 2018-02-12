@@ -41,6 +41,8 @@ ModelImporter:
     100066: Cube
     100068: Arm_ik_L
     100070: Arm_ik_R
+    100072: Chair_back
+    100074: Lift
     400000: Armature
     400002: Chair
     400004: Character
@@ -77,6 +79,8 @@ ModelImporter:
     400066: Cube
     400068: Arm_ik_L
     400070: Arm_ik_R
+    400072: Chair_back
+    400074: Lift
     2100000: Chair
     2100002: Frame
     2100004: Character__Character_Texture_png
@@ -107,6 +111,7 @@ ModelImporter:
     7400032: Win
     7400034: Lose
     7400036: Lose3
+    7400038: Win2
     9500000: //RootNode
     13700000: Character
   externalObjects:
@@ -502,7 +507,7 @@ ModelImporter:
       name: Fail_05
       takeName: Fail_05
       firstFrame: 0
-      lastFrame: 43
+      lastFrame: 45
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -522,7 +527,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.22362868
+      - time: 0.30167747
         functionName: PlayTaskFailSfx
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 0e36552cf0c124095b73504f6b7f428b,
@@ -614,6 +619,42 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Win2
+      takeName: Win2
+      firstFrame: 0
+      lastFrame: 515
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.47247088
+        functionName: GrabGlass
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0e36552cf0c124095b73504f6b7f428b,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

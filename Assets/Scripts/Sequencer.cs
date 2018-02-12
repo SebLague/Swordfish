@@ -24,6 +24,7 @@ public class Sequencer : MonoBehaviour {
     public Image fadePlane;
     bool readyForGameReload;
     public AudioClip endBeepAudio;
+    public CinemachineVirtualCamera winCam;
 
     private void Start()
     {
@@ -162,7 +163,7 @@ public class Sequencer : MonoBehaviour {
 
     public void GameWin()
     {
-		//StartCoroutine(GameLoseSequence(true));
+		StartCoroutine(GameWinSequence());
         FindObjectOfType<Stan>().OnWinGame();
     }
 
@@ -170,6 +171,14 @@ public class Sequencer : MonoBehaviour {
     {
         StartCoroutine(GameLoseSequence());
         FindObjectOfType<Stan>().OnLoseGame();
+    }
+
+    IEnumerator GameWinSequence()
+    {
+        //yield return new WaitForSeconds(.75f);
+        yield return null;
+        FindObjectOfType<CinemachineBrain>().m_DefaultBlend.m_Time = 12;
+        winCam.Priority = 100;
     }
 
     IEnumerator GameLoseSequence()
