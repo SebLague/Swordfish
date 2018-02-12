@@ -285,7 +285,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d3f5814dda0d743ff81c3be2adbf14f6, type: 3}
   - {fileID: 8300000, guid: 3dd24e256b0c14a5bbd7bde2acd7e4d2, type: 3}
   - {fileID: 8300000, guid: e4383c5d5ac814eae8a232ab66c88062, type: 3}
-  maxTimeBetweenSpawns: 8
+  maxTimeBetweenSpawns: 5
   skillCurve:
     serializedVersion: 2
     m_Curve:

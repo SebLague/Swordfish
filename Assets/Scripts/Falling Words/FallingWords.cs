@@ -53,8 +53,11 @@ public class FallingWords : Task {
     public bool autoType_debug;
     float nextAutoTypeTime;
     public float skillExtra = .01f;
+
+    List<int> possibleActiveWordIndices = new List<int>();
 	// Use this for initialization
 	void Start () {
+        
         stan = FindObjectOfType<Stan>();
         if (stan != null)
         {
@@ -142,10 +145,7 @@ public class FallingWords : Task {
                     mesh.text = words[wordIndex];
                     PositionWord(mesh);
                     activeWords.Add(new Word(words[wordIndex], mesh));
-                    if (activeWords.Count == 1)
-                    {
-                        activeWords[0].UpdateColour(inputString);
-                    }
+                  
                     wordIndex++;
                     nextMinSpawnTime = Time.time + minDelay;
                     // nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
@@ -169,14 +169,7 @@ public class FallingWords : Task {
 			{
 				TaskFailed();
                 activeWords.Remove(word);
-				if (potentialWordMatches.Contains(word))
-				{
-					potentialWordMatches.Remove(word);
-					if (potentialWordMatches.Count == 0)
-					{
-						inputString = "";
-					}
-				}
+
                 Destroy(word.mesh.gameObject);
 			}
         }
@@ -189,13 +182,14 @@ public class FallingWords : Task {
             if (word.DeletionEffect())
             {
                 wordsToDelete.RemoveAt(i);
+                //print("delete mesh " + i + " " + word.word);
                 Destroy(word.mesh.gameObject);
             }
         }
 
-			if (activeWords.Count > 0)
+		if (activeWords.Count > 0)
         {
-            activeWords[0].mesh.color = Color.white;
+            //activeWords[0].mesh.color = Color.white;
             HandleInput();
         }
 
@@ -270,10 +264,7 @@ public class FallingWords : Task {
         Sfx.Play(wordCompleteAudio, .2f);
 
         inputString = "";
-        if (activeWords.Count > 0)
-        {
-            activeWords[0].UpdateColour("");
-        }
+      
     }
 
     float TypeSpeed
@@ -312,50 +303,89 @@ public class FallingWords : Task {
                 }
             }
         }
-
+        string initialInput = inputString;
         bool hasChanged = false;
-		Word word = activeWords[0];
-        foreach (char c in frameInput.ToLower())
-        {
-            bool newInputStringValid = false;
-            string newInputString = inputString + c;
-
-           
-            if (word.word.StartsWith(newInputString,System.StringComparison.CurrentCulture))
+        List<int> newPossibleIndices = new List<int>();
+        for (int i = 0; i < activeWords.Count; i ++) {
+		    Word word = activeWords[i];
+            //print("testing: " + word.word + " : " + inputString);
+            foreach (char c in frameInput.ToLower())
             {
-                newInputStringValid = true;
-                hasChanged = true;
-            }
-        
+                bool newInputStringValid = false;
+                string newInputString = initialInput + c;
 
-            if (newInputStringValid)
-            {
-                if (!recordingWordTime)
+
+                if (word.word.StartsWith(newInputString, System.StringComparison.CurrentCulture))
                 {
-                    recordingWordTime = true;
-                    wordStartTime = Time.time;
+                    newInputStringValid = true;
+                    hasChanged = true;
+                    possibleActiveWordIndices.Add(i);
+                    newPossibleIndices.Add(i);
+                   // print(i + ": " + word.word + " starts with " + newInputString);
                 }
-                inputString = newInputString;
+                else
+                {
+					//print(i + ": " + word.word + " does not sstart with " + newInputString);
+                }
+
+
+                if (newInputStringValid)
+                {
+                    
+                    if (!recordingWordTime)
+                    {
+                        recordingWordTime = true;
+                        wordStartTime = Time.time;
+                    }
+                    inputString = newInputString;
+                }
             }
-            else
-            {
-                break;
-            }
+        }
+
+        if (newPossibleIndices.Count > 0)
+        {
+            possibleActiveWordIndices = newPossibleIndices;
         }
 
         if (hasChanged)
         {
-			word.UpdateColour(inputString);
-            if (word.word == inputString)
-            {
-				
-                activeWords.RemoveAt(0);
-                word.Completed();
-                wordsToDelete.Add(word);
-                OnWordSucceeded(inputString);
-               
+			for (int i = 0; i < activeWords.Count; i++)
+			{
+                if (activeWords[i].word == inputString)
+				{
+					//print("remv " + i);
 
+					activeWords[i].Completed();
+					wordsToDelete.Add(activeWords[i]);
+                    activeWords.RemoveAt(i);
+
+					OnWordSucceeded(inputString);
+                    break;
+				}
+			}
+
+            string poss = "possible indices: ";
+            foreach (int a in possibleActiveWordIndices)
+            {
+                poss += a + ", ";
             }
+            string acc = "";
+            for (int i = 0; i < activeWords.Count; i++)
+            {
+                if (possibleActiveWordIndices.Contains(i))
+                {
+                    
+                    activeWords[i].UpdateColour(inputString);
+                    acc += "update " + i + ", ";
+                }
+                else
+                {
+                    activeWords[i].ClearColour();
+                    acc += "clear " + i + ", ";
+                }
+            }
+            //print(poss + " : " + acc);
+          
         
         }
     }
@@ -371,11 +401,13 @@ public class FallingWords : Task {
         int deletionIndex;
         float nextDeleteTime;
         string delString;
+        Color defaultCol;
 
         public Word(string word, TextMesh mesh)
         {
             this.word = word;
             this.mesh = mesh;
+            defaultCol = mesh.color;
         }
 
         public void Completed()
@@ -418,7 +450,9 @@ public class FallingWords : Task {
         public void UpdateColour(string inputString)
         {
             int colFormatLength = 0;
+
             if (word.StartsWith(inputString, System.StringComparison.CurrentCulture) && inputString != "") {
+                mesh.color = Color.white;
                 string colFormat = "<color=" + highlightCol + ">" + "</color>";
                 colFormatLength = colFormat.Length;
                 mesh.text = "<color=" + highlightCol + ">" + inputString + "</color>";
@@ -433,17 +467,26 @@ public class FallingWords : Task {
                 mesh.text = word;
             }
 
-            if (inputString.Length < word.Length)
+            if (inputString.Length > 0)
             {
-                if (word[inputString.Length] == ' ')
+                if (inputString.Length < word.Length)
                 {
-                    mesh.text=mesh.text.Remove(inputString.Length+colFormatLength,1);
-                    mesh.text=mesh.text.Insert(inputString.Length + colFormatLength, "_");
+                    if (word[inputString.Length] == ' ')
+                    {
+                        mesh.text = mesh.text.Remove(inputString.Length + colFormatLength, 1);
+                        mesh.text = mesh.text.Insert(inputString.Length + colFormatLength, "_");
+                    }
+                    string currCharColStr = "<color=" + currLetterCol + ">";
+                    mesh.text = mesh.text.Insert(inputString.Length + colFormatLength, currCharColStr);
+                    mesh.text = mesh.text.Insert(inputString.Length + colFormatLength + currCharColStr.Length + 1, "</color>");
                 }
-                string currCharColStr = "<color=" + currLetterCol + ">";
-                mesh.text = mesh.text.Insert(inputString.Length+colFormatLength, currCharColStr);
-                mesh.text = mesh.text.Insert(inputString.Length + colFormatLength + currCharColStr.Length +1, "</color>");
             }
+        }
+
+        public void ClearColour()
+        {
+            mesh.text = word;
+            mesh.color = defaultCol;
         }
     }
 }
