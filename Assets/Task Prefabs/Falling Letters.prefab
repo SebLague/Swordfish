@@ -85,7 +85,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1939550273098180}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.476, y: 3.43, z: 0}
+  m_LocalPosition: {x: 2.476, y: 3.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4080204062910146}
@@ -270,6 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2edd064f31104303af5998a524820ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnWin: 0
   restartDelay: 0.1
   validAreas: {fileID: 1939550273098180}
   t: {fileID: 4900000, guid: 29e28cfa1549c4693910858fced33e3e, type: 3}
@@ -278,14 +279,13 @@ MonoBehaviour:
   destroyHeight: -3.6
   textPrefab: {fileID: 102724380795516884}
   speedMinMax: {x: 0.2, y: 0.25}
-  delayMinMax: {x: 4.5, y: 3.2}
   speedFac: 0.05
-  minDelay: 1
+  minDelay: 1.5
   wordCompleteAudio:
   - {fileID: 8300000, guid: d3f5814dda0d743ff81c3be2adbf14f6, type: 3}
   - {fileID: 8300000, guid: 3dd24e256b0c14a5bbd7bde2acd7e4d2, type: 3}
   - {fileID: 8300000, guid: e4383c5d5ac814eae8a232ab66c88062, type: 3}
-  maxTimeBetweenSpawns: 5
+  maxTimeBetweenSpawns: 7
   skillCurve:
     serializedVersion: 2
     m_Curve:
@@ -346,3 +346,4 @@ MonoBehaviour:
   scrollSpeed_readonly: 0
   autoType_debug: 0
   skillExtra: 0.09
+  curveMultiplier: 0.7

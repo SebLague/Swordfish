@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Task : MonoBehaviour {
-
+    public bool dontDestroyOnWin;
 	public event System.Action OnLose;
 	public event System.Action OnWin;
     public float restartDelay = .1f;

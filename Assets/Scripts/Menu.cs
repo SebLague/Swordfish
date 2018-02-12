@@ -72,7 +72,7 @@ public class Menu : MonoBehaviour {
 	void Update () {
         if (playing)
         {
-            if (Input.anyKeyDown && !keyPressed && readyToSkip)
+            if (Input.anyKeyDown && !(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) && !keyPressed && readyToSkip)
             {
                 keyPressed = true;
 				

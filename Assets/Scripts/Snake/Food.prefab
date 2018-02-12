@@ -200,7 +200,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.29
+  m_Radius: 1.6
 --- !u!95 &95451821992227196
 Animator:
   serializedVersion: 3
@@ -232,3 +232,4 @@ MonoBehaviour:
   ring: {fileID: 4291123216395424}
   maxS: 3.5
   speed: 0.8
+  lifetime: 9

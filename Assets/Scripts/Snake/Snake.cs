@@ -31,7 +31,6 @@ public class Snake : MonoBehaviour
     static LinkedList<MoveData> headPoints;
 
     Vector2 initialDirection = Vector2.up;
-    Vector2 dirOld;
     Vector2 iOld;
     public float smoothMoveTime = .1f;
     Vector2 velocity;
@@ -44,6 +43,8 @@ public class Snake : MonoBehaviour
     bool success;
 
     public GameObject missileTaskPlayer;
+    Bounds screenLeft;
+    Bounds screenRight;
 
     struct MoveData
     {
@@ -66,6 +67,9 @@ public class Snake : MonoBehaviour
         CreateSnake(startSnakeSize);
         growingParts = new List<Transform>();
         iOld = initialDirection;
+
+		screenLeft = screen.topScreens[0].bounds;
+        screenRight = screen.topScreens[3].bounds;
     }
 
     // Update is called once per frame
@@ -142,6 +146,9 @@ public class Snake : MonoBehaviour
 
             snake[0].Move(displacement, false);
 
+			float headX = snake[0].position.x;
+			bool left = headX + size / 2f > screenLeft.min.x && headX - size / 2f < screenLeft.max.x;
+			bool right = headX + size / 2f > screenRight.min.x && headX - size / 2f < screenRight.max.x;
             float buffer = .1f;
             // left
             if (snake[0].position.x + size / 2f < screen.minMaxX.x)
@@ -160,14 +167,29 @@ public class Snake : MonoBehaviour
             //down
             if (snake[0].position.y + size / 2f < screen.minMaxY.x)
             {
+                
                 Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.y + size / 2f - buffer);
+                if (left)
+                {
+                    newPos = new Vector2(snake[0].position.x, screenLeft.max.y + size / 2f - buffer);
+                }
+				if (right)
+				{
+                    newPos = new Vector2(snake[0].position.x, screenRight.max.y + size / 2f - buffer);
+				}
                 snake[0].Move(newPos - snake[0].position,true);
             }
             //up
-            if (snake[0].position.y - size / 2f > screen.minMaxY.y)
+
+            float upPos = snake[0].position.y - size / 2f;
+            if (upPos > screenRight.max.y)
             {
-                Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
-                snake[0].Move(newPos - snake[0].position,true);
+                
+                if (left && upPos > screenLeft.max.y || right || upPos > screen.minMaxY.y)
+                {
+                    Vector2 newPos = new Vector2(snake[0].position.x, screen.minMaxY.x - size / 2f + buffer);
+                    snake[0].Move(newPos - snake[0].position, true);
+                }
             }
 
             for (int i = 1; i < snake.Count; i++)
@@ -296,7 +318,7 @@ public class Snake : MonoBehaviour
             {
                 OnDeathEvent();
             }
-            Sfx.Play(deathSfx, .03f);
+            Sfx.Play(deathSfx, .2f);
             dead = true;
             for (int i = 0; i < visIndex; i++)
             {
@@ -309,9 +331,7 @@ public class Snake : MonoBehaviour
     }
 
     void CreateSnake(int initialSize = 2)
-    {
-        dirOld = initialDirection;
-
+    {   
         snake = new List<SnakeSegment>();
         snake.Add(CreateBodyPart(startPos.position, null, false));
         snake.Add(CreateBodyPart((Vector2)startPos.position - initialDirection * spacing, snake[0], false));

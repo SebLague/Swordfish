@@ -15,14 +15,11 @@ public class FallingWords : Task {
     public TextMesh textPrefab;
     int wordIndex;
     float nextMinSpawnTime;
-    BoxCollider2D[] topScreens;
+
     Bounds[] validBounds;
     public Vector2 speedMinMax;
-
-    public Vector2 delayMinMax;
     bool done;
     List<Word> activeWords;
-    List<Word> potentialWordMatches;
     string inputString;
     bool allWordsSpawned;
     bool spawnedFirst;
@@ -53,6 +50,7 @@ public class FallingWords : Task {
     public bool autoType_debug;
     float nextAutoTypeTime;
     public float skillExtra = .01f;
+    public float curveMultiplier = .95f;
 
     List<int> possibleActiveWordIndices = new List<int>();
 	// Use this for initialization
@@ -67,7 +65,6 @@ public class FallingWords : Task {
         wordsToDelete = new List<Word>();
         inputString = "";
         activeWords = new List<Word>();
-        potentialWordMatches = new List<Word>();
 
         words = t.text.Split(',');
         //Utility.Shuffle(words);
@@ -75,7 +72,7 @@ public class FallingWords : Task {
         {
             words[i] = words[i].Trim().ToLower();
         }
-        topScreens = FindObjectOfType<ScreenAreas>().topScreens;
+
         validBounds = validAreas.GetComponents<BoxCollider2D>().Select(v=>v.bounds).ToArray();
         float widest = 0;
         for (int i = 0; i < validBounds.Length; i++)
@@ -97,7 +94,7 @@ public class FallingWords : Task {
 		float completionPercent = wordIndex / ((float)words.Length - 1);
         float baseSpeed = Mathf.Lerp(speedMinMax.x, speedMinMax.y, completionPercent);
         float restartDifficultyPercent = Mathf.Clamp01((numRestarts - 1) / 4f);
-        float skillBasedCurveAdd = skillCurve.Evaluate(Mathf.Clamp(TypeSpeed,0,15)) * (1-restartDifficultyPercent);
+        float skillBasedCurveAdd = skillCurve.Evaluate(Mathf.Clamp(TypeSpeed,0,15)) * (1-restartDifficultyPercent) * curveMultiplier;
         //float skillBasedSpeedFac = Mathf.Lerp(speedFac*skillBasedCurveFac, 0, restartDifficultyPercent);
         //float targetSpeed = baseSpeed + TypeSpeed * skillBasedSpeedFac;
         float targetSpeed = baseSpeed + skillBasedCurveAdd / 100f;
@@ -126,8 +123,8 @@ public class FallingWords : Task {
 
                 bool isForcedSpawn = Time.time > nextForcedSpawnTime || activeWords.Count == 0;
                 bool minTimeHasPassed = Time.time > nextMinSpawnTime;
-                bool shouldSpawnFirst = percentDoneWithFirstWord > .1f && !spawnedFirst && activeWords.Count <= 3 && minTimeHasPassed;
-                bool shouldSpawnSecond = percentDoneWithFirstWord > .5f && !spawnedSecond && activeWords.Count <= 3 && minTimeHasPassed;
+                bool shouldSpawnFirst = percentDoneWithFirstWord > .25f && !spawnedFirst && activeWords.Count <= 3 && minTimeHasPassed;
+                bool shouldSpawnSecond = percentDoneWithFirstWord > .7f && !spawnedSecond && activeWords.Count <= 3 && minTimeHasPassed;
 
 
                 if (isForcedSpawn || shouldSpawnFirst || shouldSpawnSecond)
@@ -149,7 +146,6 @@ public class FallingWords : Task {
                     wordIndex++;
                     nextMinSpawnTime = Time.time + minDelay;
                     // nextSpawnTime = Time.time + Mathf.Lerp(delayMinMax.x, delayMinMax.y, completionPercent);
-                    potentialWordMatches = new List<Word>(activeWords);
 
                 }
             }
@@ -291,6 +287,20 @@ public class FallingWords : Task {
 
     void HandleInput()
     {
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            if (inputString.Length > 1)
+            {
+                inputString = inputString.Substring(0, inputString.Length - 1);
+            }
+            else {
+                inputString = "";
+            }
+            foreach (int i in possibleActiveWordIndices)
+            {
+                activeWords[i].UpdateColour(inputString);
+            }
+        }
         string frameInput = Input.inputString;
         if (autoType_debug && Application.isEditor && Time.time > nextAutoTypeTime)
         {
@@ -309,8 +319,12 @@ public class FallingWords : Task {
         for (int i = 0; i < activeWords.Count; i ++) {
 		    Word word = activeWords[i];
             //print("testing: " + word.word + " : " + inputString);
-            foreach (char c in frameInput.ToLower())
-            {
+            for (int cI = 0; cI < frameInput.Length; cI++) {
+                char c = frameInput.ToLower()[cI];
+                if (c == '_' || c == '-')
+                {
+                    c = ' ';
+                }
                 bool newInputStringValid = false;
                 string newInputString = initialInput + c;
 
@@ -398,7 +412,6 @@ public class FallingWords : Task {
 
         const string highlightCol = "#b71b1b";
         const string currLetterCol = "#e5811f";
-        int deletionIndex;
         float nextDeleteTime;
         string delString;
         Color defaultCol;
@@ -414,7 +427,6 @@ public class FallingWords : Task {
         {
             mesh.transform.position = mesh.GetComponent<MeshRenderer>().bounds.center;
             mesh.anchor = TextAnchor.MiddleCenter;
-            deletionIndex = word.Length;
             mesh.text = word;
             mesh.color = new Color(1, 1, 1, .2f);
             delString = word;

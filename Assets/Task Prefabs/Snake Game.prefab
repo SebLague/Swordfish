@@ -197,12 +197,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222e6fa434d5348dd8ff5cc9503ee287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnWin: 0
   restartDelay: 1
   foodGOPrefab: {fileID: 1811727082863654, guid: d274f3ce3f4e34cc9a1b38de5290b316,
     type: 2}
-  timeBetweenSpawns: {x: 0.4, y: 3}
-  numToSpawn: 2
-  maxNumOnScreen: 6
+  timeBetweenSpawns: {x: 0.4, y: 1.9}
+  numToSpawn: 32
+  maxNumOnScreen: 10
   numRemText: {fileID: 102705979720048540}
   endPos: {fileID: 4807607770354852}
 --- !u!114 &114692298054405438
@@ -227,10 +228,10 @@ MonoBehaviour:
   foodMask:
     serializedVersion: 2
     m_Bits: 512
-  numToGrowByPerFood: 12
+  numToGrowByPerFood: 10
   wiggleSpeed: 13
   wiggleDst: 0.02
-  growSpeed: 5
+  growSpeed: 7
   wiggle: 1
   smoothMoveTime: 0.01
   eatSfx:

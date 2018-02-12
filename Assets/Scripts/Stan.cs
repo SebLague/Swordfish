@@ -46,7 +46,7 @@ public class Stan : MonoBehaviour {
 
     public void GrabGlass()
     {
-        //Debug.Break();
+       // Debug.Break();
         glass.transform.parent = handBone.transform;
         StartCoroutine(LerpGlass());
     }
@@ -58,7 +58,7 @@ public class Stan : MonoBehaviour {
         float p = 0;
         while (p < 1)
         {
-            p += Time.deltaTime / .2f;
+            p += Time.deltaTime * 2;
 			glass.transform.localPosition = Vector3.Lerp(locPos, Vector3.zero, p);
             glass.transform.localRotation = Quaternion.Slerp(locRot, Quaternion.identity, p);
             yield return null;

@@ -12,12 +12,10 @@ public class Dodger : MonoBehaviour {
     public Vector2 currV { get; private set; }
     public Vector2 targetV { get; private set; }
     Rigidbody2D rb;
-    ScreenAreas screen;
 
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
-        screen = FindObjectOfType<ScreenAreas>();
         size = Snake.size;
         transform.localScale = Vector3.one * size;
 	}

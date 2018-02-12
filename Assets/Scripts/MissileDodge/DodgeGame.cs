@@ -44,8 +44,7 @@ public class DodgeGame : Task {
 		base.Update();
         if (!taskOver)
         {
-            float percent = 1 - Mathf.Clamp01(timeRemaining / duration);
-
+    
             if (Time.time > nextSpawnTime && curr < max)
             {
                 curr++;
@@ -61,11 +60,7 @@ public class DodgeGame : Task {
                     }
 
                 }
-                float currDelay = delay;
-                if (curr == 1)
-                {
-                    currDelay = 4;
-                }
+         
                 nextSpawnTime = Time.time + delay;
 
                 Missile missile = Instantiate(missilePrefab);
@@ -85,6 +80,7 @@ public class DodgeGame : Task {
             if (timeRemaining <= 0)
             {
                 TaskCompleted();
+                Destroy(player.gameObject);
             }
         }
 	}

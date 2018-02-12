@@ -14,6 +14,7 @@ public class Login : Task
     public GameObject granted;
     public GameObject menu;
     public GameObject successObject;
+    public GameObject rollAudio;
 
     string fullHintsTxt;
     bool showingMessage;
@@ -130,6 +131,7 @@ public class Login : Task
         yield return new WaitForSeconds(.5f);
         successObject.SetActive(true);
         fish.SetActive(true);
+        rollAudio.SetActive(true);
     }
     IEnumerator Message(bool accessGranted, bool loopForever)
     {

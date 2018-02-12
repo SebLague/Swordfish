@@ -11,7 +11,7 @@ public class Food : MonoBehaviour {
     public float speed = 1;
     float p;
 
-    const float lifetime = 8;
+    public float lifetime = 10;
     float time;
     float startScale;
 

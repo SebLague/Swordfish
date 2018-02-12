@@ -25,6 +25,7 @@ public class Sequencer : MonoBehaviour {
     bool readyForGameReload;
     public AudioClip endBeepAudio;
     public CinemachineVirtualCamera winCam;
+    public AudioClip taskSuccessAudio;
 
     private void Start()
     {
@@ -68,7 +69,7 @@ public class Sequencer : MonoBehaviour {
 
     void StartTransition()
     {
-		if (currentTask != null)
+        if (currentTask != null && !currentTask.dontDestroyOnWin)
 		{
 			Destroy(currentTask.gameObject);
 			currentTask = null;
@@ -105,13 +106,19 @@ public class Sequencer : MonoBehaviour {
             currentTask.gameObject.SetActive(true);
             currentTask.SetNumRestarts(numRestarts);
             currentTask.OnLose += Restart;
-            currentTask.OnWin += TransitionToNextTask;
+            currentTask.OnWin += OnWin;
 
             if (easyMode[taskIndex])
             {
                 currentTask.EnterEasyMode_Debug();
             }
         }
+    }
+
+    void OnWin()
+    {
+        Sfx.Play(taskSuccessAudio, .8f);
+        TransitionToNextTask();
     }
 	
     void TransitionToNextTask()
@@ -179,6 +186,11 @@ public class Sequencer : MonoBehaviour {
         yield return null;
         FindObjectOfType<CinemachineBrain>().m_DefaultBlend.m_Time = 12;
         winCam.Priority = 100;
+        yield return new WaitForSeconds(2);
+        readyForGameReload = true;
+        yield return new WaitForSeconds(15);
+        FindObjectOfType<Stan>().SayWithText("press any key to return to menu",null);
+        
     }
 
     IEnumerator GameLoseSequence()
@@ -188,6 +200,7 @@ public class Sequencer : MonoBehaviour {
         float speed = (1 / .7f);
         Color themeCol = Color.red;
 		yield return new WaitForSeconds(.2f);
+        bool s = false;
         float t = 0;
         bool hasPlayedBeep = false;
 		while (t < endDuration)
@@ -195,7 +208,12 @@ public class Sequencer : MonoBehaviour {
             if (t > 1 && !readyForGameReload)
             {
                 readyForGameReload = true;
-                //FindObjectOfType<Stan>().SayWithText("press spacebar to play again",null);
+
+            }
+            if (t > 8 && !s)
+            {
+                s = true;
+                FindObjectOfType<Stan>().SayWithText("press any key to return to menu", null);
             }
 
             float p = Mathf.Repeat(t * speed,1);
