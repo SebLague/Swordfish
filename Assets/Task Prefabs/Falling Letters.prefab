@@ -258,7 +258,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: f604259164a7242dbadd12a497925660, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 2824493658
+    rgba: 4288059030
 --- !u!114 &114634028574045000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -290,50 +290,38 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: -0.09117508
-      value: 0.18804932
-      inSlope: 0.26610136
-      outSlope: 0.26610136
-      tangentMode: 34
-    - serializedVersion: 2
-      time: 2.9955788
-      value: 1.0094388
-      inSlope: 1.104335
-      outSlope: 1.104335
+      time: -0.1370354
+      value: 0.6232796
+      inSlope: 0.28612268
+      outSlope: 0.28612268
       tangentMode: 0
     - serializedVersion: 2
-      time: 4.005569
-      value: 9.02541
-      inSlope: 7.6081905
-      outSlope: 7.6081905
+      time: 2.674549
+      value: 3.2120323
+      inSlope: 2.4193573
+      outSlope: 2.4193573
       tangentMode: 0
     - serializedVersion: 2
-      time: 5.0354247
-      value: 17.07324
-      inSlope: 10.271657
-      outSlope: 10.271657
+      time: 3.7886364
+      value: 6.6954913
+      inSlope: 4.4822693
+      outSlope: 4.4822693
       tangentMode: 0
     - serializedVersion: 2
-      time: 5.953957
-      value: 25.104395
-      inSlope: 7.2186823
-      outSlope: 7.2186823
+      time: 4.897844
+      value: 14.362487
+      inSlope: 6.293382
+      outSlope: 6.293382
       tangentMode: 0
     - serializedVersion: 2
-      time: 7.007104
-      value: 29.997913
-      inSlope: 4.2585864
-      outSlope: 4.2585864
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 8.112925
-      value: 36.016006
-      inSlope: 5.2532787
-      outSlope: 5.2532787
+      time: 7.5115747
+      value: 28.311085
+      inSlope: 5.233348
+      outSlope: 5.233348
       tangentMode: 0
     - serializedVersion: 2
       time: 15.226175
-      value: 56.04092
+      value: 50.980427
       inSlope: 1.6038918
       outSlope: 1.6038918
       tangentMode: 0
